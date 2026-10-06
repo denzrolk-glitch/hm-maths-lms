@@ -112,8 +112,8 @@ declare
 begin
   if not public.is_admin() then raise exception 'Only admins can generate sessions'; end if;
   if p_month !~ '^\d{4}-(0[1-9]|1[0-2])$' then raise exception 'Invalid month'; end if;
-  select * into c from public.classes where id = p_class;
-  if not found then raise exception 'Class not found'; end if;
+  c := (select cl from public.classes cl where cl.id = p_class);
+  if c.id is null then raise exception 'Class not found'; end if;
   if coalesce(array_length(c.schedule_days, 1), 0) = 0 or c.start_time is null then
     raise exception 'Set the class days and start time first';
   end if;
