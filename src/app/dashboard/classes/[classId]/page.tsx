@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { CalendarDays, Download, FileText, Lock, PlayCircle, Radio } from "lucide-react";
 import { requireUser } from "@/lib/auth";
-import { getClassAccess, liveWindow } from "@/lib/data";
+import { getClassAccess, getLiveLinks, liveWindow } from "@/lib/data";
 import { ClassBanner } from "@/components/class-banner";
 import { LiveCountdown } from "@/components/live-countdown";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/misc";
 import type { Lesson } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { getFormat, getT } from "@/i18n/server";
+import { getFormat, getScheduleLabel, getT } from "@/i18n/server";
+import { formatDuration } from "@/lib/schedule";
 import { youtubeId, youtubeThumb } from "@/lib/youtube";
 
 export default async function ClassroomPage({ params, searchParams }: {
@@ -21,7 +22,7 @@ export default async function ClassroomPage({ params, searchParams }: {
   const { classId } = await params;
   const { month: requested } = await searchParams;
   const { supabase, user, profile } = await requireUser();
-  const [t, tc, f] = await Promise.all([getT("portal.classroom"), getT("common"), getFormat()]);
+  const [t, tc, f, sched] = await Promise.all([getT("portal.classroom"), getT("common"), getFormat(), getScheduleLabel()]);
   const access = await getClassAccess(supabase, user.id, classId, profile.role === "admin");
   if (!access) notFound();
   const { cls, months } = access;
@@ -35,7 +36,10 @@ export default async function ClassroomPage({ params, searchParams }: {
     .order("week_number").order("sort_order").order("created_at");
   const lessons = (data ?? []) as Lesson[];
   const now = Date.now();
-  const liveSessions = lessons.map((l) => ({ l, w: liveWindow(l, now) })).filter((x) => x.w && !x.w.ended);
+  const liveSessions = lessons.map((l) => ({ l, w: liveWindow(l, cls.duration_minutes, now) })).filter((x) => x.w && !x.w.ended)
+    .sort((a, b) => (a.l.live_start_time! < b.l.live_start_time! ? -1 : 1));
+  const links = await getLiveLinks(supabase, liveSessions.filter((x) => x.w!.open).map((x) => x.l.id));
+  const timetable = sched(cls);
   const recordings = lessons.filter((l) => l.youtube_url);
   const materials = lessons.filter((l) => l.tute_pdf_url);
   const weeks = [...new Set(recordings.map((l) => l.week_number))].sort((a, b) => a - b);
@@ -49,7 +53,7 @@ export default async function ClassroomPage({ params, searchParams }: {
           <div>
             <div className="flex flex-wrap gap-2"><Badge>{tc(`classTypes.${cls.class_type}`)}</Badge>{cls.town && <Badge variant="secondary">{tc(`towns.${cls.town}`)}</Badge>}</div>
             <h1 className="mt-2 font-display text-2xl font-bold">{cls.title}</h1>
-            {cls.schedule && <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><CalendarDays className="h-4 w-4" />{cls.schedule}</p>}
+            {timetable && <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><CalendarDays className="h-4 w-4" />{timetable}</p>}
           </div>
           <nav aria-label={t("months")} className="flex flex-wrap gap-1.5">
             {months.map((m) => (
@@ -72,13 +76,19 @@ export default async function ClassroomPage({ params, searchParams }: {
         {liveSessions.length ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {liveSessions.map(({ l, w }) => (
-              <Card key={l.id}>
+              <Card key={l.id} className={cn(w!.cancelled && "opacity-70")}>
                 <CardHeader>
-                  <CardTitle className="text-base">{l.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{f.dateTime(l.live_start_time)} · {t("week", { n: l.week_number })}</p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {l.session_type === "extra" && <Badge variant="warning">{tc("schedule.types.extra")}</Badge>}
+                    {w!.cancelled && <Badge variant="destructive">{tc("schedule.cancelled")}</Badge>}
+                  </div>
+                  <CardTitle className={cn("text-base", w!.cancelled && "line-through")}>{l.title}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{f.dateTime(l.live_start_time)} · {formatDuration(w!.minutes)}</p>
                 </CardHeader>
                 <CardContent>
-                  <LiveCountdown title={l.title} startISO={w!.startISO} endISO={w!.endISO} liveUrl={w!.liveUrl} serverNow={new Date(now).toISOString()} watermark={watermark} />
+                  {w!.cancelled
+                    ? <p className="text-sm text-muted-foreground">{t("cancelledText")}</p>
+                    : <LiveCountdown title={l.title} startISO={w!.startISO} endISO={w!.closeISO} liveUrl={links.get(l.id) ?? null} serverNow={new Date(now).toISOString()} watermark={watermark} />}
                 </CardContent>
               </Card>
             ))}

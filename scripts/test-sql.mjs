@@ -21,9 +21,18 @@ await db.exec(`
   grant select, insert, update, delete on storage.objects to authenticated;
   grant select on storage.objects to anon;
 `);
+const sql2 = readFileSync(new URL("../supabase/migrations/0002_class_schedule.sql", import.meta.url), "utf8");
 await db.exec(sql);
 await db.exec(sql); // idempotency check: must be re-runnable
-console.log("✓ migration applied twice (idempotent)");
+// 0002 must move existing lessons.live_url values into lesson_live_links
+await db.exec(`insert into public.classes (id, title) values ('00000000-0000-0000-0000-0000000000c0','tmp');
+  insert into public.lessons (id, class_id, month, title, live_url) values ('00000000-0000-0000-0000-0000000000d0','00000000-0000-0000-0000-0000000000c0','2026-01','tmp','https://zoom.us/j/1');`);
+await db.exec(sql2);
+await db.exec(sql2);
+assert.equal((await db.query(`select live_url from public.lesson_live_links where lesson_id='00000000-0000-0000-0000-0000000000d0'`)).rows[0].live_url, "https://zoom.us/j/1");
+assert.equal((await db.query(`select 1 from information_schema.columns where table_name='lessons' and column_name='live_url'`)).rows.length, 0);
+await db.exec(`delete from public.classes where id='00000000-0000-0000-0000-0000000000c0'`);
+console.log("✓ migrations 0001 + 0002 applied twice (idempotent), live links moved");
 
 const ADMIN = "00000000-0000-0000-0000-00000000000a";
 const S1 = "00000000-0000-0000-0000-000000000001";
@@ -160,6 +169,39 @@ assert.equal(ord.status, "pending"); assert.equal(Number(ord.amount), 3000);
 await as(S1, () => q(`update public.orders set status='approved'`));
 assert.equal((await q(`select status from public.orders`))[0].status, "pending");
 console.log("✓ tute book orders");
+
+// ---- 0002: weekly timetable, session generator, private live links
+await as(ADMIN, () => q(`update public.classes set schedule_days='{3}', start_time='16:00', duration_minutes=120 where id=$1`, [paid.id]));
+await as(ADMIN, () => q(`insert into public.class_live_defaults (class_id, live_url) values ($1,'https://youtube.com/live/abcdefghijk')`, [paid.id]));
+await fails(as(S1, () => q(`select public.generate_class_sessions($1,'2026-10','Theory')`, [paid.id])), "student generating sessions");
+const [gen] = await as(ADMIN, () => q(`select public.generate_class_sessions($1,'2026-10','Theory') as n`, [paid.id]));
+assert.equal(gen.n, 4); // Wednesdays in Oct 2026: 7, 14, 21, 28
+const [gen2] = await as(ADMIN, () => q(`select public.generate_class_sessions($1,'2026-10','Theory') as n`, [paid.id]));
+assert.equal(gen2.n, 0);
+const sess = await q(`select l.title, l.week_number, l.live_start_time, k.live_url from public.lessons l join public.lesson_live_links k on k.lesson_id=l.id where l.class_id=$1 order by l.live_start_time`, [paid.id]);
+assert.equal(sess.length, 4);
+assert.equal(new Date(sess[0].live_start_time).toISOString(), "2026-10-07T10:30:00.000Z"); // 4:00 PM Colombo
+assert.equal(sess[0].week_number, 1); assert.equal(sess[3].week_number, 4);
+assert.match(sess[0].title, /^Theory · Wed 07 Oct$/);
+console.log("✓ generator: 4 Wednesday sessions at 4:00 PM SL time, idempotent, default link copied");
+
+await fails(as(S1, () => q(`insert into public.class_live_defaults (class_id, live_url) values ($1,'https://x.y')`, [free.id])), "student writing default links");
+assert.equal((await as(S1, () => q(`select * from public.class_live_defaults`))).length, 0);
+assert.equal((await as(S1, () => q(`select * from public.lesson_live_links`))).length, 0); // all generated sessions are far away
+const mk = async (mins, extra = {}) => {
+  const [r] = await as(ADMIN, () => q(`insert into public.lessons (class_id, month, title, live_start_time, session_type, is_cancelled) values ($1,'2026-10','Extra', now() + make_interval(mins => $2), 'extra', $3) returning id`, [paid.id, mins, extra.cancelled ?? false]));
+  await as(ADMIN, () => q(`insert into public.lesson_live_links values ($1,'https://zoom.us/j/999')`, [r.id]));
+  return r.id;
+};
+const soon = await mk(10), later = await mk(120), cancelled = await mk(5, { cancelled: true }), running = await mk(-100);
+const vis = (await as(S1, () => q(`select lesson_id from public.lesson_live_links`))).map((r) => r.lesson_id).sort();
+assert.deepEqual(vis, [soon, running].sort());
+assert.equal((await as(S2, () => q(`select * from public.lesson_live_links`))).length, 0);
+assert.equal((await as(S1, () => q(`select * from public.lessons where id=$1`, [later]))).length, 1); // lesson visible, link hidden
+try { await as(S1, () => q(`update public.lesson_live_links set live_url='https://evil.example' where lesson_id=$1`, [soon])); } catch { /* blocked */ }
+assert.equal((await q(`select live_url from public.lesson_live_links where lesson_id=$1`, [soon]))[0].live_url, "https://zoom.us/j/999");
+assert.ok(cancelled);
+console.log("✓ live link readable only inside the join window, by paid students, not when cancelled");
 
 console.log("\nALL SQL TESTS PASSED");
 process.exit(0);

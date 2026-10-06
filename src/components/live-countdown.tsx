@@ -1,4 +1,5 @@
 "use client";
+import { livePlatform } from "@/lib/schedule";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Radio, Video } from "lucide-react";
@@ -23,6 +24,7 @@ export function LiveCountdown({ title, startISO, endISO, liveUrl, serverNow, wat
   title: string; startISO: string; endISO: string; liveUrl: string | null; serverNow: string; watermark: Watermark;
 }) {
   const tr = useT("common.live");
+  const ts = useT("common.schedule");
   const router = useRouter();
   const offset = useRef(new Date(serverNow).getTime() - Date.now());
   const [now, setNow] = useState(() => Date.now() + offset.current);
@@ -70,18 +72,19 @@ export function LiveCountdown({ title, startISO, endISO, liveUrl, serverNow, wat
 
   const started = now >= start;
   const ytId = youtubeId(liveUrl);
+  const platform = livePlatform(liveUrl);
   return (
     <div className="flex flex-col gap-3">
       <div className={cn("inline-flex self-start items-center gap-2 rounded-full px-3 py-1 text-xs font-bold", started ? "bg-destructive/15 text-destructive" : "bg-warning/15 text-warning")}>
         <Radio className={cn("h-3.5 w-3.5", started && "animate-pulse")} /> {started ? tr("liveNow") : tr("startingIn", { min: split(start - now).m + 1 })}
       </div>
       {!liveUrl ? (
-        <p className="text-sm text-muted-foreground">{tr("loading")}</p>
+        <p className="text-sm text-muted-foreground">{refreshed.current ? tr("noLink") : tr("loading")}</p>
       ) : ytId ? (
         <VideoPlayer videoId={ytId} watermark={watermark} title={title} live />
       ) : (
         <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ variant: "gradient", size: "lg" }), "self-start")}>
-          <Video /> {tr("join")}
+          <Video /> {platform && platform !== "other" ? tr("joinOn", { platform: ts(`platforms.${platform}`) }) : tr("join")}
         </a>
       )}
     </div>

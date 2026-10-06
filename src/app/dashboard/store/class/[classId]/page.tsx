@@ -9,14 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert } from "@/components/ui/misc";
 import type { ClassRow } from "@/lib/types";
 import { currentMonth, formatLKR, shiftMonth } from "@/lib/utils";
-import { getFormat, getT } from "@/i18n/server";
+import { getFormat, getScheduleLabel, getT } from "@/i18n/server";
 import { EnrollForm, type MonthOption } from "./enroll-form";
 
 export default async function EnrollPage({ params, searchParams }: { params: Promise<{ classId: string }>; searchParams: Promise<{ month?: string }> }) {
   const { classId } = await params;
   const { month: wanted } = await searchParams;
   const { supabase, user } = await requireUser();
-  const [t, tc, f] = await Promise.all([getT("portal.enroll"), getT("common"), getFormat()]);
+  const [t, tc, f, sched] = await Promise.all([getT("portal.enroll"), getT("common"), getFormat(), getScheduleLabel()]);
   const { data } = await supabase.from("classes").select("*").eq("id", classId).maybeSingle();
   if (!data) notFound();
   const cls = data as ClassRow;
@@ -47,7 +47,7 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
             {cls.description && <p className="whitespace-pre-line text-sm text-muted-foreground">{cls.description}</p>}
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {cls.town && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{tc(`towns.${cls.town}`)}</span>}
-              {cls.schedule && <span className="flex items-center gap-1.5"><CalendarClock className="h-4 w-4" />{cls.schedule}</span>}
+              {sched(cls) && <span className="flex items-center gap-1.5"><CalendarClock className="h-4 w-4" />{sched(cls)}</span>}
             </div>
             <p className="font-display text-xl font-bold">{tc("perMonth", { amount: formatLKR(cls.fee) })}</p>
           </div>

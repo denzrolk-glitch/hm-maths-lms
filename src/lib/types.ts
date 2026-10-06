@@ -26,6 +26,11 @@ export interface ClassRow {
   town: Town | null;
   fee: number;
   schedule: string | null;
+  /** Weekly class days, 0 = Sunday … 6 = Saturday. */
+  schedule_days: number[];
+  /** "HH:MM:SS" Sri Lanka time, or null. */
+  start_time: string | null;
+  duration_minutes: number;
   banner_url: string | null;
   is_active: boolean;
   is_free: boolean;
@@ -42,7 +47,9 @@ export interface Lesson {
   youtube_url: string | null;
   tute_pdf_url: string | null;
   live_start_time: string | null;
-  live_url: string | null;
+  session_type: "regular" | "extra";
+  duration_minutes: number | null;
+  is_cancelled: boolean;
   sort_order: number;
   created_at: string;
 }

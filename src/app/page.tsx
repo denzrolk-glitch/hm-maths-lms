@@ -9,7 +9,7 @@ import { CtaOrbit } from "@/components/landing/cta-orbit";
 import { Faq } from "@/components/landing/faq";
 import { LandingFooter } from "@/components/landing/footer";
 import { getSession } from "@/lib/auth";
-import { getT } from "@/i18n/server";
+import { getScheduleLabel, getT } from "@/i18n/server";
 import { SITE } from "@/content/site";
 import { publicImage } from "@/lib/public-image";
 import type { ClassRow } from "@/lib/types";
@@ -17,7 +17,7 @@ import type { ClassRow } from "@/lib/types";
 type Placeholder = { title: string; type: string; year: number; lines: string[] };
 
 export default async function HomePage() {
-  const [{ supabase, user, profile }, t] = await Promise.all([getSession(), getT("landing")]);
+  const [{ supabase, user, profile }, t, sched] = await Promise.all([getSession(), getT("landing"), getScheduleLabel()]);
   const { data } = await supabase.from("classes").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(10);
   const rows = (data ?? []) as ClassRow[];
 
@@ -27,7 +27,7 @@ export default async function HomePage() {
     ? rows.map((c) => {
         const own = (c.description ?? "").split(/\r?\n/).map((l) => l.replace(/^[-•*]\s*/, "").trim()).filter(Boolean).slice(0, 4);
         return {
-        id: c.id, title: c.title, type: c.class_type, year: c.target_year, town: c.town, schedule: c.schedule,
+        id: c.id, title: c.title, type: c.class_type, year: c.target_year, town: c.town, schedule: sched(c),
         fee: Number(c.fee), isFree: c.is_free, banner: c.banner_url,
         lines: own.length ? own : defaultLines(c.class_type),
         };

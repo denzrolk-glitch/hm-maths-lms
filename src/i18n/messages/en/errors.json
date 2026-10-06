@@ -124,7 +124,8 @@
       "resetPassword": "Could not reset password",
       "changeRole": "Could not change role",
       "saveProduct": "Could not save product",
-      "updateOrder": "Could not update order"
+      "updateOrder": "Could not update order",
+      "generate": "Could not create sessions"
     },
     "granted": "Access granted to {name}.",
     "tempPassword": "Temporary password: {temp}",
@@ -133,6 +134,16 @@
       "approved": "Order approved.",
       "rejected": "Order rejected.",
       "shipped": "Order shipped."
-    }
+    },
+    "time": "Enter a valid date and time.",
+    "durationRange": "Class length must be between 15 minutes and 10 hours.",
+    "startTimeRequired": "Pick a start time for the class days.",
+    "dateAndTime": "Enter both the date and the start time.",
+    "liveNeedsTime": "A live link needs a date and start time.",
+    "extraAdded": "Extra class added.",
+    "generated": "{n} session(s) created.",
+    "generatedNone": "All sessions for that month already exist.",
+    "sessionCancelled": "Session cancelled.",
+    "sessionRestored": "Session restored."
   }
 }

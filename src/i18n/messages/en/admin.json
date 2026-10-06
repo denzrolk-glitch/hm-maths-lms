@@ -73,7 +73,19 @@
     "recording": "Recording",
     "tute": "Tute",
     "edit": "Edit",
-    "deleteLesson": "Delete this lesson (and its tute PDF)?"
+    "deleteLesson": "Delete this lesson (and its tute PDF)?",
+    "noTimetable": "No weekly timetable yet",
+    "nextClass": "Next class",
+    "upcomingCount": "Upcoming sessions",
+    "timetable": "Weekly timetable",
+    "timetableHint": "Create every class of a month in one click from the weekly days & time.",
+    "noDefaultLink": "No default live link",
+    "editTimetable": "Edit timetable",
+    "addSession": "Add a session",
+    "addSessionHint": "Extra class, a one-off session or a recording-only lesson.",
+    "upcoming": "Upcoming sessions",
+    "noUpcoming": "No upcoming sessions. Generate this month's classes or add an extra class.",
+    "noLink": "No live link"
   },
   "forms": {
     "delete": "Delete",
@@ -100,7 +112,17 @@
       "active": "Active (visible in store)",
       "free": "Free (Free Zone)",
       "save": "Save class",
-      "create": "Create class"
+      "create": "Create class",
+      "timetable": "Weekly timetable",
+      "days": "Class days",
+      "startTime": "Start time (Sri Lanka)",
+      "duration": "Class length",
+      "defaultLink": "Usual live link",
+      "defaultLinkHint": "YouTube Live, Zoom or Google Meet. Copied to every generated session — you can change any single session later.",
+      "note": "Timetable note (optional)",
+      "notePh": "Hall: Panadura Public Library",
+      "preview": "Students see:",
+      "noDays": "Pick class days and a start time"
     },
     "lesson": {
       "week": "Week",
@@ -112,11 +134,25 @@
       "youtubeHint": "Leave empty until the recording is ready",
       "liveStart": "Live session start (Sri Lanka time)",
       "liveUrl": "Live link (YouTube Live / Zoom)",
-      "liveUrlHint": "Hidden from students until 20 min before start",
+      "liveUrlHint": "YouTube Live, Zoom or Meet. Hidden from students until 20 min before start.",
       "tute": "Tute PDF",
       "tuteUpload": "Upload tute PDF",
       "save": "Save lesson",
-      "add": "Add lesson"
+      "add": "Add lesson",
+      "type": "Session type",
+      "extraTitlePh": "Extra class — Past paper discussion",
+      "date": "Date",
+      "time": "Start time",
+      "duration": "Length",
+      "classDefault": "Class default ({d})",
+      "noDateHint": "No date = recording / tute only lesson",
+      "liveNeedsDate": "Pick a date & time to add a live link",
+      "more": "Recording, notes & tute PDF",
+      "cancelled": "Cancelled (students see “Cancelled”, link stays hidden)",
+      "addExtra": "Add extra class",
+      "cancel": "Cancel session",
+      "restore": "Restore session",
+      "cancelConfirm": "Cancel this session? Students will see it as cancelled."
     },
     "review": {
       "note": "Note (optional, shown to student)",
@@ -192,6 +228,13 @@
       "imageUpload": "Upload image",
       "active": "Active",
       "add": "Add product"
+    },
+    "generate": {
+      "prefix": "Session title",
+      "submit": "Create sessions",
+      "working": "Creating…",
+      "needTimetable": "Set the class days and start time first.",
+      "setTimetable": "Set timetable →"
     }
   },
   "exams": {

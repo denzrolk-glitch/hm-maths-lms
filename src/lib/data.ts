@@ -1,7 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ClassRow, Enrollment, Lesson, Notice } from "@/lib/types";
-import { LIVE_DURATION_MINUTES, LIVE_UNLOCK_MINUTES } from "@/lib/constants";
+import { LIVE_DURATION_MINUTES, LIVE_GRACE_MINUTES, LIVE_UNLOCK_MINUTES } from "@/lib/constants";
 
 export type EnrollmentWithClass = Enrollment & { classes: ClassRow | null };
 
@@ -36,18 +36,36 @@ export async function getNotices(supabase: SupabaseClient, limit = 50, tag?: str
 
 /** Lessons with a live session that has not ended yet (RLS limits to accessible classes/months). */
 export async function getUpcomingLive(supabase: SupabaseClient, limit = 10) {
-  const since = new Date(Date.now() - LIVE_DURATION_MINUTES * 60 * 1000).toISOString();
-  const { data } = await supabase.from("lessons").select("*, classes(title)").not("live_start_time", "is", null)
-    .gte("live_start_time", since).order("live_start_time").limit(limit);
-  return (data ?? []) as (Lesson & { classes: { title: string } | null })[];
+  // Longest possible session (10 h) + grace, then trim precisely with liveWindow().
+  const since = new Date(Date.now() - (600 + LIVE_GRACE_MINUTES) * 60 * 1000).toISOString();
+  const { data } = await supabase.from("lessons").select("*, classes(title, duration_minutes)").not("live_start_time", "is", null)
+    .eq("is_cancelled", false).gte("live_start_time", since).order("live_start_time").limit(limit + 10);
+  type Row = Lesson & { classes: { title: string; duration_minutes: number } | null };
+  return ((data ?? []) as Row[]).filter((l) => !liveWindow(l, l.classes?.duration_minutes)?.ended).slice(0, limit);
 }
 
-/** Hide live_url until the 20-minute pre-join window opens (and after the session ended). */
-export function liveWindow(lesson: Pick<Lesson, "live_start_time" | "live_url">, now = Date.now()) {
+/**
+ * Live links the current user may open right now. RLS on lesson_live_links only returns rows whose
+ * join window is open (20 min before start → end + grace) for classes/months the student paid for.
+ */
+export async function getLiveLinks(supabase: SupabaseClient, lessonIds: string[]) {
+  if (!lessonIds.length) return new Map<string, string>();
+  const { data } = await supabase.from("lesson_live_links").select("lesson_id, live_url").in("lesson_id", lessonIds);
+  return new Map((data ?? []).map((r) => [r.lesson_id as string, r.live_url as string]));
+}
+
+/** Session length: lesson override → class default → global default. */
+export const sessionMinutes = (lesson: Pick<Lesson, "duration_minutes">, classMinutes?: number | null) =>
+  lesson.duration_minutes ?? classMinutes ?? LIVE_DURATION_MINUTES;
+
+/** Join window of a session. The link itself only arrives (via RLS) while `open` is true. */
+export function liveWindow(lesson: Pick<Lesson, "live_start_time" | "duration_minutes" | "is_cancelled">, classMinutes?: number | null, now = Date.now()) {
   if (!lesson.live_start_time) return null;
+  const minutes = sessionMinutes(lesson, classMinutes);
   const start = new Date(lesson.live_start_time).getTime();
   const unlock = start - LIVE_UNLOCK_MINUTES * 60 * 1000;
-  const end = start + LIVE_DURATION_MINUTES * 60 * 1000;
-  const open = now >= unlock && now < end;
-  return { startISO: new Date(start).toISOString(), endISO: new Date(end).toISOString(), open, ended: now >= end, liveUrl: open ? lesson.live_url : null };
+  const end = start + minutes * 60 * 1000;
+  const close = end + LIVE_GRACE_MINUTES * 60 * 1000;
+  const open = !lesson.is_cancelled && now >= unlock && now < close;
+  return { startISO: new Date(start).toISOString(), endISO: new Date(end).toISOString(), closeISO: new Date(close).toISOString(), minutes, open, ended: now >= close, cancelled: lesson.is_cancelled };
 }

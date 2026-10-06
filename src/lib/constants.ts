@@ -16,5 +16,11 @@ export const DISTRICTS = [
 ] as const;
 
 export const LIVE_UNLOCK_MINUTES = 20;
-/** A live session is considered over this many minutes after it starts. */
-export const LIVE_DURATION_MINUTES = 240;
+/** Default class length when neither the session nor the class sets one. */
+export const LIVE_DURATION_MINUTES = 120;
+/** The join link stays open this long after the scheduled end (classes often run over). */
+export const LIVE_GRACE_MINUTES = 30;
+/** Class length choices in the admin forms (minutes). */
+export const DURATION_OPTIONS = [60, 90, 120, 150, 180, 210, 240, 300] as const;
+/** Week starts on Monday in the day picker; values are JS/Postgres day numbers (0 = Sunday). */
+export const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0] as const;

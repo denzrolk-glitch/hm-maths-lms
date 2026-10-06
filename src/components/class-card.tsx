@@ -3,13 +3,14 @@ import { CalendarClock, MapPin, GraduationCap } from "lucide-react";
 import type { ClassRow } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { ClassBanner } from "@/components/class-banner";
-import { getT } from "@/i18n/server";
+import { getScheduleLabel, getT } from "@/i18n/server";
 import { formatLKR } from "@/lib/utils";
 
 export { ClassBanner };
 
 export async function ClassCard({ cls, href, footer }: { cls: ClassRow; href?: string; footer?: React.ReactNode }) {
-  const t = await getT("common");
+  const [t, sched] = await Promise.all([getT("common"), getScheduleLabel()]);
+  const timetable = sched(cls);
   const body = (
     <div className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)] transition-all hover:-translate-y-0.5 hover:shadow-lg">
       <div className="relative">
@@ -24,7 +25,7 @@ export async function ClassCard({ cls, href, footer }: { cls: ClassRow; href?: s
         {cls.description ? <p className="line-clamp-2 whitespace-pre-line text-sm text-muted-foreground">{cls.description}</p> : null}
         <div className="mt-auto space-y-1 pt-2 text-xs text-muted-foreground">
           {cls.town ? <p className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" />{t(`towns.${cls.town}`)}</p> : null}
-          {cls.schedule ? <p className="flex items-center gap-1.5"><CalendarClock className="h-3.5 w-3.5" /><span className="line-clamp-1">{cls.schedule}</span></p> : null}
+          {timetable ? <p className="flex items-center gap-1.5"><CalendarClock className="h-3.5 w-3.5" /><span className="line-clamp-1">{timetable}</span></p> : null}
         </div>
         <div className="flex items-center justify-between border-t pt-3">
           <span className="flex items-center gap-1.5 font-display font-bold">

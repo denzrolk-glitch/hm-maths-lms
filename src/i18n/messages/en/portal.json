@@ -145,7 +145,8 @@
     "noLive": "No upcoming live sessions for {month}.",
     "noRecordings": "Recordings will appear here after each class.",
     "pdfTute": "PDF tute",
-    "noMaterials": "No tutes uploaded for this month yet."
+    "noMaterials": "No tutes uploaded for this month yet.",
+    "cancelledText": "This class has been cancelled. Watch the notices for the new date."
   },
   "lesson": {
     "locked": "This lesson is locked",

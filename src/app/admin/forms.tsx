@@ -1,14 +1,15 @@
 "use client";
 import { useState } from "react";
-import { Check, KeyRound, Pin, PinOff, Send, Trash2, Truck, X } from "lucide-react";
+import { Ban, CalendarPlus, Check, KeyRound, Link2, Pin, PinOff, RotateCcw, Send, Trash2, Truck, X } from "lucide-react";
 import { toast } from "sonner";
 import { ActionForm } from "@/components/action-form";
 import { FileUpload } from "@/components/file-upload";
 import { Field, Input, Select, Textarea } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { AL_YEARS, CLASS_TYPES, NOTICE_TAGS, TOWNS } from "@/lib/constants";
+import { AL_YEARS, CLASS_TYPES, DURATION_OPTIONS, NOTICE_TAGS, TOWNS, WEEK_DAYS } from "@/lib/constants";
 import type { ActionState, ClassRow, Exam, Lesson, Product } from "@/lib/types";
-import { currentMonth, formatMonth, isoToColomboLocal, shiftMonth } from "@/lib/utils";
+import { cn, currentMonth, formatMonth, isoToColomboLocal, shiftMonth } from "@/lib/utils";
+import { formatDuration, livePlatform, scheduleLabel } from "@/lib/schedule";
 import * as A from "./actions";
 import { useT } from "@/i18n/client";
 
@@ -41,12 +42,41 @@ const monthOptions = () => {
   return Array.from({ length: 16 }, (_, i) => shiftMonth(cur, 3 - i));
 };
 
+// ───────────── Shared bits ─────────────
+function PlatformHint({ url }: { url: string }) {
+  const ts = useT("common.schedule");
+  const p = livePlatform(url);
+  if (!url || !p) return null;
+  return <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-teal-700 dark:bg-teal-500/10 dark:text-teal-300"><Link2 className="h-3 w-3" />{ts(`platforms.${p}`)}</span>;
+}
+
+function DurationSelect({ id, name, value, onChange, allowDefault, defaultMinutes }: {
+  id: string; name: string; value: string; onChange: (v: string) => void; allowDefault?: boolean; defaultMinutes?: number;
+}) {
+  const { t } = useForms();
+  return (
+    <Select id={id} name={name} value={value} onChange={(e) => onChange(e.target.value)}>
+      {allowDefault && <option value="">{t("lesson.classDefault", { d: formatDuration(defaultMinutes ?? 120) })}</option>}
+      {DURATION_OPTIONS.map((d) => <option key={d} value={d}>{formatDuration(d)}</option>)}
+    </Select>
+  );
+}
+
 // ───────────── Classes ─────────────
-export function ClassForm({ cls }: { cls?: ClassRow }) {
+export function ClassForm({ cls, defaultLiveUrl }: { cls?: ClassRow; defaultLiveUrl?: string | null }) {
   const { t, tc } = useForms();
   const [type, setType] = useState<string>(cls?.class_type ?? "Theory");
   const [free, setFree] = useState<boolean>(cls?.is_free ?? false);
+  const [days, setDays] = useState<number[]>(cls?.schedule_days ?? []);
+  const [start, setStart] = useState<string>(cls?.start_time?.slice(0, 5) ?? "");
+  const [duration, setDuration] = useState<string>(String(cls?.duration_minutes ?? 120));
+  const [note, setNote] = useState<string>(cls?.schedule ?? "");
+  const [link, setLink] = useState<string>(defaultLiveUrl ?? "");
   const isFree = free || type === "Free Seminar";
+  const dayNames = tc.raw<string[]>("schedule.days") ?? [];
+  const preview = scheduleLabel({ schedule_days: days, start_time: start || null, duration_minutes: Number(duration), schedule: note },
+    dayNames, (d) => tc("schedule.every", { days: d }), tc("schedule.and"));
+  const toggle = (d: number) => setDays((cur) => (cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d]));
   return (
     <ActionForm action={A.saveClassAction} className="space-y-4">
       {cls && <input type="hidden" name="id" value={cls.id} />}
@@ -63,12 +93,43 @@ export function ClassForm({ cls }: { cls?: ClassRow }) {
           <Select id="town" name="town" defaultValue={cls?.town ?? ""}><option value="">{t("class.anyCenter")}</option>{TOWNS.map((x) => <option key={x} value={x}>{tc(`towns.${x}`)}</option>)}</Select>
         </Field>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label={t("class.fee")} htmlFor="fee" hint={isFree ? t("class.feeFree") : undefined}>
-          <Input id="fee" name="fee" type="number" min={0} step={50} defaultValue={cls?.fee ?? 2500} disabled={isFree} />
+      <Field label={t("class.fee")} htmlFor="fee" hint={isFree ? t("class.feeFree") : undefined}>
+        <Input id="fee" name="fee" type="number" min={0} step={50} defaultValue={cls?.fee ?? 2500} disabled={isFree} />
+      </Field>
+
+      {/* Weekly timetable */}
+      <fieldset id="timetable" className="scroll-mt-24 space-y-4 rounded-2xl border bg-muted/30 p-4">
+        <legend className="px-1 font-display text-sm font-semibold">{t("class.timetable")}</legend>
+        <div className="space-y-1.5">
+          <p className="text-sm font-medium">{t("class.days")}</p>
+          <div className="grid grid-cols-7 gap-1.5">
+            {WEEK_DAYS.map((d) => (
+              <label key={d} className="cursor-pointer">
+                <input type="checkbox" name="schedule_days" value={d} checked={days.includes(d)} onChange={() => toggle(d)} className="peer sr-only" />
+                <span className="flex h-10 items-center justify-center rounded-lg border bg-background text-xs font-semibold transition hover:border-teal-500/50 peer-checked:border-teal-600 peer-checked:bg-teal-600 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-ring sm:text-sm">
+                  {dayNames[d]}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label={t("class.startTime")} htmlFor="start_time"><Input id="start_time" name="start_time" type="time" value={start} onChange={(e) => setStart(e.target.value)} required={days.length > 0} /></Field>
+          <Field label={t("class.duration")} htmlFor="duration_minutes"><DurationSelect id="duration_minutes" name="duration_minutes" value={duration} onChange={setDuration} /></Field>
+        </div>
+        <Field label={t("class.defaultLink")} htmlFor="default_live_url" hint={t("class.defaultLinkHint")}>
+          <div className="relative">
+            <Input id="default_live_url" name="default_live_url" type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://youtube.com/live/… · https://zoom.us/j/…" className="pr-32" />
+            <span className="absolute right-2 top-1/2 -translate-y-1/2"><PlatformHint url={link} /></span>
+          </div>
         </Field>
-        <Field label={t("class.schedule")} htmlFor="schedule"><Input id="schedule" name="schedule" defaultValue={cls?.schedule ?? ""} placeholder={t("class.schedulePh")} /></Field>
-      </div>
+        <Field label={t("class.note")} htmlFor="schedule"><Input id="schedule" name="schedule" value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("class.notePh")} /></Field>
+        <div className="rounded-xl border border-dashed border-teal-500/40 bg-background px-3 py-2.5 text-sm">
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("class.preview")} </span>
+          <span className="font-medium">{preview ?? t("class.noDays")}</span>
+        </div>
+      </fieldset>
+
       <Field label={t("class.banner")}>
         <FileUpload bucket="class-banners" prefix="banners" name="banner_url" publicUrl accept="image/jpeg,image/png,image/webp" maxMB={3} defaultValue={cls?.banner_url} label={t("class.bannerUpload")} />
       </Field>
@@ -81,42 +142,118 @@ export function ClassForm({ cls }: { cls?: ClassRow }) {
   );
 }
 
-// ───────────── Lessons ─────────────
-export function LessonForm({ classId, lesson, defaultMonth, onDone }: { classId: string; lesson?: Lesson; defaultMonth?: string; onDone?: () => void }) {
+// ───────────── Sessions & lessons ─────────────
+export type SessionDefaults = { liveUrl?: string | null; durationMinutes?: number; startTime?: string | null };
+
+export function LessonForm({ classId, lesson, liveUrl, defaults, defaultType = "regular", onDone }: {
+  classId: string; lesson?: Lesson; liveUrl?: string | null; defaults?: SessionDefaults; defaultType?: "regular" | "extra"; onDone?: () => void;
+}) {
   const { t, tc, fm } = useForms();
-  const [month, setMonth] = useState(lesson?.month ?? defaultMonth ?? currentMonth());
+  const k = lesson?.id ?? "new";
+  const local = isoToColomboLocal(lesson?.live_start_time); // "YYYY-MM-DDTHH:mm"
+  const [type, setType] = useState<"regular" | "extra">(lesson?.session_type ?? defaultType);
+  const [date, setDate] = useState(local.slice(0, 10));
+  const [time, setTime] = useState(local.slice(11, 16) || (defaults?.startTime?.slice(0, 5) ?? ""));
+  const [duration, setDuration] = useState(lesson?.duration_minutes ? String(lesson.duration_minutes) : "");
+  const [link, setLink] = useState(lesson ? liveUrl ?? "" : defaults?.liveUrl ?? "");
+  const [month, setMonth] = useState(lesson?.month ?? currentMonth());
+  const effMonth = date ? date.slice(0, 7) : month;
   return (
-    <ActionForm action={A.saveLessonAction} className="space-y-4" resetOnSuccess={!lesson} onSuccess={onDone}>
+    <ActionForm action={A.saveLessonAction} className="space-y-4" resetOnSuccess={!lesson}
+      onSuccess={() => { if (!lesson) { setDate(""); setDuration(""); setLink(defaults?.liveUrl ?? ""); } onDone?.(); }}>
       {lesson && <input type="hidden" name="id" value={lesson.id} />}
       <input type="hidden" name="class_id" value={classId} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_120px]">
-        <Field label={t("month")} htmlFor={`month-${lesson?.id ?? "new"}`}>
-          <Select id={`month-${lesson?.id ?? "new"}`} name="month" value={month} onChange={(e) => setMonth(e.target.value)}>
-            {monthOptions().map((m) => <option key={m} value={m}>{fm(m)}</option>)}
-          </Select>
-        </Field>
-        <Field label={t("lesson.week")} htmlFor={`week-${lesson?.id ?? "new"}`}>
-          <Select id={`week-${lesson?.id ?? "new"}`} name="week_number" defaultValue={lesson?.week_number ?? 1}>{[1, 2, 3, 4, 5, 6].map((w) => <option key={w} value={w}>{t("lesson.weekN", { n: w })}</option>)}</Select>
+
+      <div className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1" role="radiogroup" aria-label={t("lesson.type")}>
+        {(["regular", "extra"] as const).map((v) => (
+          <label key={v} className="cursor-pointer">
+            <input type="radio" name="session_type" value={v} checked={type === v} onChange={() => setType(v)} className="peer sr-only" />
+            <span className="flex h-9 items-center justify-center rounded-lg text-sm font-semibold text-muted-foreground transition peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-ring">
+              {tc(`schedule.types.${v}`)}
+            </span>
+          </label>
+        ))}
+      </div>
+
+      <Field label={t("lesson.title")} htmlFor={`title-${k}`}>
+        <Input id={`title-${k}`} name="title" defaultValue={lesson?.title} placeholder={type === "extra" ? t("lesson.extraTitlePh") : t("lesson.titlePh")} required />
+      </Field>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Field label={t("lesson.date")} htmlFor={`date-${k}`}><Input id={`date-${k}`} name="live_date" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></Field>
+        <Field label={t("lesson.time")} htmlFor={`time-${k}`}><Input id={`time-${k}`} name="live_time" type="time" value={date ? time : ""} onChange={(e) => setTime(e.target.value)} disabled={!date} required={!!date} /></Field>
+        <Field label={t("lesson.duration")} htmlFor={`dur-${k}`}>
+          <DurationSelect id={`dur-${k}`} name="duration_minutes" value={duration} onChange={setDuration} allowDefault defaultMinutes={defaults?.durationMinutes} />
         </Field>
       </div>
-      <Field label={t("lesson.title")} htmlFor={`title-${lesson?.id ?? "new"}`}><Input id={`title-${lesson?.id ?? "new"}`} name="title" defaultValue={lesson?.title} placeholder={t("lesson.titlePh")} required /></Field>
-      <Field label={t("lesson.notes")} htmlFor={`desc-${lesson?.id ?? "new"}`}><Textarea id={`desc-${lesson?.id ?? "new"}`} name="description" defaultValue={lesson?.description ?? ""} className="min-h-[60px]" /></Field>
-      <Field label={t("lesson.youtube")} htmlFor={`yt-${lesson?.id ?? "new"}`} hint={t("lesson.youtubeHint")}>
-        <Input id={`yt-${lesson?.id ?? "new"}`} name="youtube_url" type="url" defaultValue={lesson?.youtube_url ?? ""} placeholder="https://youtu.be/…" />
+
+      {!date && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_120px]">
+          <Field label={t("month")} htmlFor={`month-${k}`} hint={t("lesson.noDateHint")}>
+            <Select id={`month-${k}`} name="month" value={month} onChange={(e) => setMonth(e.target.value)}>
+              {monthOptions().map((m) => <option key={m} value={m}>{fm(m)}</option>)}
+            </Select>
+          </Field>
+          <Field label={t("lesson.week")} htmlFor={`week-${k}`}>
+            <Select id={`week-${k}`} name="week_number" defaultValue={lesson?.week_number ?? 1}>{[1, 2, 3, 4, 5, 6].map((w) => <option key={w} value={w}>{t("lesson.weekN", { n: w })}</option>)}</Select>
+          </Field>
+        </div>
+      )}
+
+      <Field label={t("lesson.liveUrl")} htmlFor={`lu-${k}`} hint={date ? t("lesson.liveUrlHint") : t("lesson.liveNeedsDate")}>
+        <div className="relative">
+          <Input id={`lu-${k}`} name="live_url" type="url" value={link} onChange={(e) => setLink(e.target.value)} disabled={!date}
+            placeholder="https://youtube.com/live/… · https://zoom.us/j/…" className="pr-32" />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2"><PlatformHint url={date ? link : ""} /></span>
+        </div>
       </Field>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label={t("lesson.liveStart")} htmlFor={`ls-${lesson?.id ?? "new"}`}>
-          <Input id={`ls-${lesson?.id ?? "new"}`} name="live_start_time" type="datetime-local" defaultValue={isoToColomboLocal(lesson?.live_start_time)} />
-        </Field>
-        <Field label={t("lesson.liveUrl")} htmlFor={`lu-${lesson?.id ?? "new"}`} hint={t("lesson.liveUrlHint")}>
-          <Input id={`lu-${lesson?.id ?? "new"}`} name="live_url" type="url" defaultValue={lesson?.live_url ?? ""} placeholder="https://youtube.com/live/…" />
-        </Field>
-      </div>
-      <Field label={t("lesson.tute")}>
-        <FileUpload key={month} bucket="tute-pdfs" prefix={`${classId}/${month}`} name="tute_pdf_url" accept="application/pdf" maxMB={50}
-          defaultValue={lesson?.month === month ? lesson?.tute_pdf_url : null} label={t("lesson.tuteUpload")} />
-      </Field>
-      <SubmitButton pendingText={tc("actions.saving")}>{lesson ? t("lesson.save") : t("lesson.add")}</SubmitButton>
+
+      <details className="group rounded-xl border px-4 py-3 [&_summary::-webkit-details-marker]:hidden" open={!!lesson && !!(lesson.youtube_url || lesson.tute_pdf_url || lesson.description)}>
+        <summary className="cursor-pointer select-none text-sm font-semibold">{t("lesson.more")}</summary>
+        <div className="mt-4 space-y-4">
+          <Field label={t("lesson.youtube")} htmlFor={`yt-${k}`} hint={t("lesson.youtubeHint")}>
+            <Input id={`yt-${k}`} name="youtube_url" type="url" defaultValue={lesson?.youtube_url ?? ""} placeholder="https://youtu.be/…" />
+          </Field>
+          <Field label={t("lesson.notes")} htmlFor={`desc-${k}`}><Textarea id={`desc-${k}`} name="description" defaultValue={lesson?.description ?? ""} className="min-h-[60px]" /></Field>
+          <Field label={t("lesson.tute")}>
+            <FileUpload key={effMonth} bucket="tute-pdfs" prefix={`${classId}/${effMonth}`} name="tute_pdf_url" accept="application/pdf" maxMB={50}
+              defaultValue={lesson?.month === effMonth ? lesson?.tute_pdf_url : null} label={t("lesson.tuteUpload")} />
+          </Field>
+        </div>
+      </details>
+
+      {lesson && (
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="is_cancelled" defaultChecked={lesson.is_cancelled} className="h-4 w-4 accent-[hsl(var(--destructive))]" /> {t("lesson.cancelled")}</label>
+      )}
+      <SubmitButton pendingText={tc("actions.saving")}>{lesson ? t("lesson.save") : type === "extra" ? t("lesson.addExtra") : t("lesson.add")}</SubmitButton>
+    </ActionForm>
+  );
+}
+
+export function GenerateSessionsForm({ classId, ready, defaultTitle }: { classId: string; ready: boolean; defaultTitle: string }) {
+  const { t, fm } = useForms();
+  const cur = currentMonth();
+  const months = [cur, shiftMonth(cur, 1), shiftMonth(cur, 2), shiftMonth(cur, -1)];
+  if (!ready) return <p className="text-sm text-muted-foreground">{t("generate.needTimetable")} <a href="#timetable" className="font-semibold text-primary hover:underline">{t("generate.setTimetable")}</a></p>;
+  return (
+    <ActionForm action={A.generateSessionsAction} className="grid grid-cols-1 gap-3 sm:grid-cols-[150px_1fr_auto] sm:items-end">
+      <input type="hidden" name="class_id" value={classId} />
+      <Field label={t("month")} htmlFor="gen-month"><Select id="gen-month" name="month" defaultValue={cur}>{months.map((m) => <option key={m} value={m}>{fm(m)}</option>)}</Select></Field>
+      <Field label={t("generate.prefix")} htmlFor="gen-title"><Input id="gen-title" name="title" defaultValue={defaultTitle} maxLength={60} /></Field>
+      <SubmitButton pendingText={t("generate.working")}><CalendarPlus /> {t("generate.submit")}</SubmitButton>
+    </ActionForm>
+  );
+}
+
+export function CancelSessionButton({ id, cancelled }: { id: string; cancelled: boolean }) {
+  const { t } = useForms();
+  return (
+    <ActionForm action={A.toggleCancelAction} confirm={cancelled ? undefined : t("lesson.cancelConfirm")}>
+      <input type="hidden" name="id" value={id} /><input type="hidden" name="cancel" value={cancelled ? "0" : "1"} />
+      <SubmitButton variant="ghost" size="icon" aria-label={cancelled ? t("lesson.restore") : t("lesson.cancel")} title={cancelled ? t("lesson.restore") : t("lesson.cancel")}
+        className={cn(!cancelled && "text-amber-600 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-500/10")}>
+        {cancelled ? <RotateCcw /> : <Ban />}
+      </SubmitButton>
     </ActionForm>
   );
 }
