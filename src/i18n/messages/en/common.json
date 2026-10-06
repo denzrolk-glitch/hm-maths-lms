@@ -171,5 +171,9 @@
     "October",
     "November",
     "December"
-  ]
+  ],
+  "copy": {
+    "copy": "Copy",
+    "copied": "Copied!"
+  }
 }

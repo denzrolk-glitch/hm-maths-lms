@@ -285,7 +285,28 @@
     "new": "New password",
     "confirm": "Confirm new password",
     "updating": "Updating…",
-    "change": "Change password"
+    "change": "Change password",
+    "joined": "Joined {date}",
+    "stats": {
+      "classes": "Active classes",
+      "papers": "Papers done",
+      "average": "Average score"
+    },
+    "completeness": "Profile {pct}% complete",
+    "completeHint": "Add your school and district to complete it.",
+    "completeDone": "All set — your profile is complete.",
+    "detailsHint": "Keep your details up to date so we can reach you.",
+    "lockedTitle": "Registration details",
+    "editable": "Your details",
+    "securityHint": "Use a strong password that you don't use anywhere else.",
+    "tipsTitle": "Strong password tips",
+    "tips": [
+      "At least 8 characters",
+      "Mix upper and lower case letters",
+      "Add numbers or symbols",
+      "Never share it with anyone"
+    ],
+    "idTip": "Use your Student ID as the bank reference when you pay."
   },
   "payments": {
     "title": "Payments History",
@@ -316,7 +337,32 @@
       "reference": "Reference",
       "date": "Date",
       "slip": "Slip"
-    }
+    },
+    "totalPaid": "Total paid",
+    "totalPaidHint": "{n} approved payment(s)",
+    "approvedHint": "Unlocked months & orders",
+    "pendingHint": "{amount} awaiting review",
+    "needsAction": "Needs action",
+    "needsActionHint": "Slips to upload again",
+    "rejectedTitle": "{n} slip(s) were not accepted",
+    "rejectedText": "Check the admin's note below and upload a new slip.",
+    "reupload": "Upload new slip",
+    "filters": {
+      "all": "All",
+      "class": "Class fees",
+      "order": "Tute books"
+    },
+    "howTitle": "How to pay",
+    "steps": [
+      "Pick a class and month (or a tute book) in the Store.",
+      "Deposit or transfer the amount to one of the accounts below.",
+      "Upload a photo of the slip. Access unlocks once the admin approves it."
+    ],
+    "reference": "Your bank reference",
+    "ref": "Ref {ref}",
+    "noteLabel": "Admin note",
+    "viewSlip": "View slip",
+    "emptyText": "When you pay a class fee or order a tute book, it will show up here."
   },
   "enroll": {
     "current": "(current)",
