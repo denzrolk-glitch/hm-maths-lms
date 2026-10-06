@@ -26,7 +26,7 @@ export default async function AdminNoticesPage() {
         <Card className="lg:sticky lg:top-6 lg:self-start"><CardHeader><CardTitle className="text-base">{t("new")}</CardTitle></CardHeader><CardContent><NoticeForm classes={classes ?? []} /></CardContent></Card>
         <div className="space-y-3">
           {notices.map((n) => (
-            <div key={n.id} className="rounded-2xl border border-slate-200/60 bg-card p-4">
+            <div key={n.id} className="rounded-2xl border border-border/80 bg-card p-4 shadow-soft">
               <div className="flex items-start gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

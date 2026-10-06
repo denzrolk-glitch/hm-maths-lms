@@ -59,7 +59,7 @@ export default async function AdminStorePage() {
         <section className="space-y-3">
           <h2 className="font-display text-lg font-semibold">{t("products")}</h2>
           {((products ?? []) as Product[]).map((p) => (
-            <details key={p.id} className="rounded-2xl border border-slate-200/60 bg-card p-4">
+            <details key={p.id} className="rounded-2xl border border-border/80 bg-card p-4 shadow-soft">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
                 <span className="font-medium">{p.title} <span className="text-sm text-muted-foreground">· {formatLKR(p.price)}</span></span>
                 <span className="flex items-center gap-2">{p.is_active ? <Badge variant="success">{t("active")}</Badge> : <Badge variant="secondary">{t("hidden")}</Badge>}<DeleteButton action={deleteProductAction} id={p.id} size="icon" /></span>

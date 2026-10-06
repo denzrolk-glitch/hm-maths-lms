@@ -7,7 +7,7 @@ import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CLASS_TYPES, NOTICE_TAGS, TOWNS } from "@/lib/constants";
 import type { ActionState } from "@/lib/types";
-import { colomboLocalToISO, normalizeMobile } from "@/lib/utils";
+import { colomboLocalToISO, currentMonth, normalizeMobile } from "@/lib/utils";
 import { youtubeId } from "@/lib/youtube";
 import { getT } from "@/i18n/server";
 
@@ -19,6 +19,10 @@ const optStr = (fd: FormData, k: string) => str(fd, k) || null;
 const optInt = (fd: FormData, k: string) => { const v = str(fd, k); return v ? Number.parseInt(v, 10) : null; };
 const bool = (fd: FormData, k: string) => fd.get(k) === "on" || fd.get(k) === "true";
 const fail = (e: { message: string } | null, fallback: string): ActionState => ({ error: e?.message ? `${fallback}: ${e.message}` : fallback });
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const minutesOrNull = (fd: FormData, k: string) => { const n = optInt(fd, k); return n === null || Number.isNaN(n) ? null : n; };
+const isHttps = (u: string) => /^https:\/\/\S+$/.test(u);
 
 // ───────────────────────────── Classes ─────────────────────────────
 export async function saveClassAction(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -36,6 +40,9 @@ export async function saveClassAction(_p: ActionState, fd: FormData): Promise<Ac
     town,
     fee,
     schedule: optStr(fd, "schedule"),
+    schedule_days: [...new Set(fd.getAll("schedule_days").map((d) => Number(d)).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6))].sort(),
+    start_time: optStr(fd, "start_time"),
+    duration_minutes: minutesOrNull(fd, "duration_minutes") ?? 120,
     banner_url: optStr(fd, "banner_url"),
     is_active: bool(fd, "is_active"),
     is_free,
@@ -44,16 +51,27 @@ export async function saveClassAction(_p: ActionState, fd: FormData): Promise<Ac
   if (!(CLASS_TYPES as readonly string[]).includes(class_type)) return { error: await m("classType") };
   if (town && !(TOWNS as readonly string[]).includes(town)) return { error: await m("invalidCenter") };
   if (!Number.isFinite(fee) || fee < 0) return { error: await m("fee") };
+  if (row.start_time && !TIME_RE.test(row.start_time)) return { error: await m("time") };
+  if (row.duration_minutes < 15 || row.duration_minutes > 600) return { error: await m("durationRange") };
+  if (row.schedule_days.length && !row.start_time) return { error: await m("startTimeRequired") };
+  const defaultLink = optStr(fd, "default_live_url");
+  if (defaultLink && !isHttps(defaultLink)) return { error: await m("liveHttps") };
+  const saveLink = async (classId: string) => defaultLink
+    ? supabase.from("class_live_defaults").upsert({ class_id: classId, live_url: defaultLink, updated_at: new Date().toISOString() })
+    : supabase.from("class_live_defaults").delete().eq("class_id", classId);
 
   if (id) {
     const { error } = await supabase.from("classes").update(row).eq("id", id);
     if (error) return fail(error, await m("fail.saveClass"));
+    const { error: linkErr } = await saveLink(id);
+    if (linkErr) return fail(linkErr, await m("fail.saveClass"));
     revalidatePath("/admin/classes", "layout");
     revalidatePath("/", "layout");
     return { ok: true, message: await m("classSaved") };
   }
   const { data, error } = await supabase.from("classes").insert(row).select("id").single();
   if (error) return fail(error, await m("fail.createClass"));
+  await saveLink(data.id);
   revalidatePath("/", "layout");
   redirect(`/admin/classes/${data.id}`);
 }
@@ -72,30 +90,75 @@ export async function saveLessonAction(_p: ActionState, fd: FormData): Promise<A
   const id = optStr(fd, "id");
   const youtube_url = optStr(fd, "youtube_url");
   const live_url = optStr(fd, "live_url");
+  const liveDate = optStr(fd, "live_date");
+  const liveTime = optStr(fd, "live_time");
+  const session_type = str(fd, "session_type") === "extra" ? "extra" : "regular";
+  const classId = str(fd, "class_id");
+  if ((liveDate && !DATE_RE.test(liveDate)) || (liveTime && !TIME_RE.test(liveTime))) return { error: await m("time") };
+  if (!!liveDate !== !!liveTime) return { error: await m("dateAndTime") };
+  const live_start_time = liveDate && liveTime ? colomboLocalToISO(`${liveDate}T${liveTime}`) : null;
+  // A dated session belongs to the month it happens in (that is the month students pay for).
+  const month = liveDate ? liveDate.slice(0, 7) : str(fd, "month") || currentMonth();
   const row = {
-    class_id: str(fd, "class_id"),
-    month: str(fd, "month"),
-    week_number: Number(str(fd, "week_number") || 1),
+    class_id: classId,
+    month,
+    week_number: liveDate ? Math.min(6, Math.ceil(Number(liveDate.slice(8, 10)) / 7)) : Number(str(fd, "week_number") || 1),
     title: str(fd, "title"),
     description: optStr(fd, "description"),
     youtube_url,
     tute_pdf_url: optStr(fd, "tute_pdf_url"),
-    live_start_time: colomboLocalToISO(optStr(fd, "live_start_time")),
-    live_url,
-    sort_order: Number(str(fd, "sort_order") || 0),
+    live_start_time,
+    session_type,
+    duration_minutes: minutesOrNull(fd, "duration_minutes"),
+    is_cancelled: bool(fd, "is_cancelled"),
+    sort_order: liveDate ? Number(liveDate.slice(8, 10)) : Number(str(fd, "sort_order") || 0),
   };
   if (!row.title) return { error: await m("lessonTitle") };
   if (!MONTH_RE.test(row.month)) return { error: await m("month") };
   if (row.week_number < 1 || row.week_number > 6) return { error: await m("week") };
+  if (row.duration_minutes !== null && (row.duration_minutes < 15 || row.duration_minutes > 600)) return { error: await m("durationRange") };
   if (youtube_url && !youtubeId(youtube_url)) return { error: await m("youtube") };
-  if (row.live_start_time && !live_url) return { error: await m("liveLink") };
-  if (live_url && !/^https:\/\//.test(live_url)) return { error: await m("liveHttps") };
+  if (live_url && !isHttps(live_url)) return { error: await m("liveHttps") };
+  if (live_url && !live_start_time) return { error: await m("liveNeedsTime") };
   if (row.tute_pdf_url && !row.tute_pdf_url.startsWith(`${row.class_id}/`)) return { error: await m("tuteFile") };
 
-  const { error } = id ? await supabase.from("lessons").update(row).eq("id", id) : await supabase.from("lessons").insert(row);
-  if (error) return fail(error, await m("fail.saveLesson"));
+  const res = id
+    ? await supabase.from("lessons").update(row).eq("id", id).select("id").single()
+    : await supabase.from("lessons").insert(row).select("id").single();
+  if (res.error) return fail(res.error, await m("fail.saveLesson"));
+  const lessonId = res.data.id as string;
+  const { error: linkErr } = live_url
+    ? await supabase.from("lesson_live_links").upsert({ lesson_id: lessonId, live_url, updated_at: new Date().toISOString() })
+    : await supabase.from("lesson_live_links").delete().eq("lesson_id", lessonId);
+  if (linkErr) return fail(linkErr, await m("fail.saveLesson"));
   revalidatePath(`/admin/classes/${row.class_id}`);
-  return { ok: true, message: id ? await m("lessonUpdated") : await m("lessonAdded") };
+  revalidatePath("/dashboard", "layout");
+  return { ok: true, message: id ? await m("lessonUpdated") : session_type === "extra" ? await m("extraAdded") : await m("lessonAdded") };
+}
+
+/** Create every weekly session of a month from the class timetable (database function, skips existing days). */
+export async function generateSessionsAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const classId = str(fd, "class_id");
+  const month = str(fd, "month");
+  if (!MONTH_RE.test(month)) return { error: await m("month") };
+  const { data, error } = await supabase.rpc("generate_class_sessions", { p_class: classId, p_month: month, p_title: optStr(fd, "title") });
+  if (error) return fail(error, await m("fail.generate"));
+  revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath("/dashboard", "layout");
+  const n = Number(data ?? 0);
+  return { ok: true, message: n ? await m("generated", { n }) : await m("generatedNone") };
+}
+
+/** Cancel / restore a single session (students see "Cancelled" and the link stays hidden). */
+export async function toggleCancelAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase } = await requireAdmin();
+  const cancel = str(fd, "cancel") === "1";
+  const { data, error } = await supabase.from("lessons").update({ is_cancelled: cancel }).eq("id", str(fd, "id")).select("class_id").single();
+  if (error) return fail(error, await m("fail.update"));
+  revalidatePath(`/admin/classes/${data.class_id}`);
+  revalidatePath("/dashboard", "layout");
+  return { ok: true, message: cancel ? await m("sessionCancelled") : await m("sessionRestored") };
 }
 
 export async function deleteLessonAction(_p: ActionState, fd: FormData): Promise<ActionState> {

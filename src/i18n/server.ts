@@ -5,6 +5,7 @@ import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE, type Locale } from "./config";
 import { MESSAGES } from "./messages";
 import { makeT } from "./translate";
 import { formatDate, formatDateTime, formatMonth } from "@/lib/utils";
+import { scheduleLabel } from "@/lib/schedule";
 
 export const getLocale = cache(async (): Promise<Locale> => {
   const c = (await cookies()).get(LOCALE_COOKIE)?.value;
@@ -32,4 +33,11 @@ export async function getFormat() {
     dateTime: (iso: string | null | undefined) => formatDateTime(iso, locale),
     date: (iso: string | null | undefined) => formatDate(iso, locale),
   };
+}
+
+/** Translated weekly timetable label for a class ("Every Wed · 4:00 PM – 6:00 PM"). */
+export async function getScheduleLabel() {
+  const t = await getT("common.schedule");
+  const days = t.raw<string[]>("days") ?? [];
+  return (cls: Parameters<typeof scheduleLabel>[0]) => scheduleLabel(cls, days, (d) => t("every", { days: d }), t("and"));
 }

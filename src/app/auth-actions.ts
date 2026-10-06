@@ -30,6 +30,9 @@ const registerSchema = (t: T) =>
       town: z.enum(TOWNS, { errorMap: () => ({ message: t("auth.town") }) }),
       school: z.string().trim().min(2, t("auth.school")).max(120),
       district: z.string().trim().min(2, t("auth.district")).max(60),
+      address: z.string().trim().min(8, t("auth.address")).max(300),
+      city: z.string().trim().min(2, t("auth.city")).max(80),
+      postal_code: z.string().trim().regex(/^(\d{5})?$/, t("auth.postal")).optional(),
       password: z.string().min(8, t("auth.password")).max(72),
       confirm: z.string(),
       captcha: z.string().optional(),
@@ -71,18 +74,21 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
 
   // Students sign in with their mobile number; we map it to an internal e-mail so no SMS/e-mail
   // provider is needed (zero cost). The account is confirmed immediately via the service role.
-  const { error: createErr } = await admin.auth.admin.createUser({
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email: mobileToEmail(d.mobile),
     password: d.password,
     email_confirm: true,
     user_metadata: {
       full_name, mobile: d.mobile, nic: d.nic, al_year: String(d.al_year),
       town: d.town, school: d.school, district: d.district,
+      address: d.address, city: d.city, postal_code: d.postal_code ?? "",
     },
   });
-  if (createErr) {
-    return { error: /already/i.test(createErr.message) ? t("auth.mobileTaken") : t("auth.createFailed") };
+  if (createErr || !created?.user) {
+    return { error: createErr && /already/i.test(createErr.message) ? t("auth.mobileTaken") : t("auth.createFailed") };
   }
+  // Belt & braces: make sure the delivery address lands on the profile even if the signup trigger predates it.
+  await admin.from("profiles").update({ address: d.address, city: d.city, postal_code: d.postal_code || null }).eq("id", created.user.id);
 
   const supabase = await createClient();
   const { error: signInErr } = await supabase.auth.signInWithPassword({ email: mobileToEmail(d.mobile), password: d.password });

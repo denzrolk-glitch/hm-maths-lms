@@ -18,7 +18,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ examId:
     supabase.rpc("get_exam_review", { p_exam: examId }),
     supabase.from("exams").select("title").eq("id", examId).maybeSingle(),
   ]);
-  const back = <Link href="/dashboard/exams" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
+  const back = <Link href="/dashboard/exams" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
   if (error || !data) return <div className="space-y-4">{back}<Alert variant="error" className="bg-white">{error ? dbError(tr, error.message) : t("notAvailable")}</Alert></div>;
   const r = data as Review;
   const pct = r.total ? Math.round((Number(r.score) / Number(r.total)) * 100) : 0;
@@ -27,7 +27,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ examId:
   return (
     <div className="space-y-6">
       {back}
-      <div className="flex flex-col gap-4 rounded-2xl bg-card p-6 shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-2xl bg-card p-6 shadow-soft sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold">{exam?.title ?? t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("submitted", { date: f.dateTime(r.submitted_at) })}{r.is_late ? ` · ${t("late")}` : ""}</p>

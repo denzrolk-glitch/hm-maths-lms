@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Sinhala, Plus_Jakarta_Sans } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { NavProgress } from "@/components/nav-progress";
 import { I18nProvider } from "@/i18n/client";
 import { getLocale, getMessages, getT } from "@/i18n/server";
 import "./globals.css";
@@ -19,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = { themeColor: "#050505" };
+export const viewport: Viewport = { themeColor: "#1f7ae8" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} suppressHydrationWarning>
       <body className={`${sans.variable} ${display.variable} ${sinhala.variable} min-h-dvh font-sans`}>
         <I18nProvider locale={locale} messages={messages}>
+          <NavProgress />
           <Providers>{children}</Providers>
         </I18nProvider>
       </body>

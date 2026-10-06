@@ -16,25 +16,25 @@ export function Faq() {
   const shown = all ? items : items.slice(0, 5);
 
   return (
-    <section id="support" className="relative scroll-mt-24 bg-[#050505] py-24">
+    <section id="support" className="relative scroll-mt-24 py-24">
       <SectionTitle label={t("label")} title={t("title")} />
       <div className="container mt-12 max-w-3xl space-y-3">
         {shown.map((it, i) => {
           const isOpen = open === i;
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 5) * 0.05 }}
-              className={cn("overflow-hidden rounded-2xl border transition-colors", isOpen ? "border-brand-500/40 bg-[#1a1410]" : "border-white/5 bg-[#14110e] hover:border-white/15")}>
+              className={cn("overflow-hidden rounded-2xl border transition-colors", isOpen ? "border-teal-300 bg-white shadow-lift dark:border-teal-500/40 dark:bg-slate-900" : "border-teal-100 bg-white/80 shadow-soft hover:border-teal-200 dark:border-white/10 dark:bg-slate-900/70")}>
               <button type="button" onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen}
                 className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left sm:px-6 sm:py-5">
-                <span className="font-display text-[15px] font-semibold text-white sm:text-base">{it.q}</span>
-                <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-full transition", isOpen ? "rotate-45 bg-brand-500 text-white" : "bg-white/5 text-white/70")}>
+                <span className="font-display text-[15px] font-semibold text-ink dark:text-white sm:text-base">{it.q}</span>
+                <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-full transition", isOpen ? "rotate-45 bg-gradient-to-br from-teal-600 to-brand-500 text-white" : "bg-teal-50 text-teal-700 dark:bg-white/5 dark:text-teal-300")}>
                   <Plus className="h-4 w-4" />
                 </span>
               </button>
               <AnimatePresence initial={false}>
                 {isOpen && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-                    <p className="px-5 pb-5 text-sm leading-relaxed text-white/60 sm:px-6">{it.a}</p>
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:px-6">{it.a}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -44,7 +44,7 @@ export function Faq() {
         {items.length > 5 && (
           <div className="pt-4 text-center">
             <button type="button" onClick={() => setAll((v) => !v)}
-              className="rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-white/80 transition hover:border-brand-500 hover:text-white">
+              className="rounded-xl border border-teal-200 bg-white px-6 py-2.5 text-sm font-semibold text-teal-700 shadow-sm transition hover:-translate-y-px hover:border-teal-400 dark:bg-white/5 dark:text-teal-200">
               {all ? t("less") : t("more")}
             </button>
           </div>

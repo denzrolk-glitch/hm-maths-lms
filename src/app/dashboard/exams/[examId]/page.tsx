@@ -20,7 +20,7 @@ export default async function ExamPage({ params }: { params: Promise<{ examId: s
   const exam = data as Exam;
   const { data: sub } = await supabase.from("exam_submissions").select("*").eq("exam_id", examId).eq("student_id", user.id).maybeSingle();
   const s = sub as ExamSubmission | null;
-  const back = <Link href="/dashboard/exams" className="mb-4 inline-flex items-center gap-1 text-sm text-white/70 hover:text-white"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
+  const back = <Link href="/dashboard/exams" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
   const notOpen = exam.opens_at && new Date(exam.opens_at) > new Date();
   const closed = exam.closes_at && new Date(exam.closes_at) < new Date();
 

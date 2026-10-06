@@ -37,7 +37,7 @@ export default async function MyClassesPage({ searchParams }: { searchParams: Pr
         <Link href="/dashboard/store" className={buttonVariants({ size: "sm" })}><Wallet /> {t("payFees")}</Link>
       </PageHeader>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border dark:border-white/10 bg-card p-3 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border dark:border-white/10 bg-card p-3 shadow-soft">
         <span className="px-3 font-display text-base font-semibold text-foreground">{t("hub")}</span>
         {tabs.map(([k, label]) => (
           <Link key={k} href={`?tab=${k}`} className={cn("rounded-xl px-4 py-2 text-sm font-medium transition", tab === k ? "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5")}>
@@ -51,11 +51,11 @@ export default async function MyClassesPage({ searchParams }: { searchParams: Pr
         live.length ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {live.map((l) => (
-              <Link key={l.id} href={`/dashboard/classes/${l.class_id}?month=${l.month}#live`} className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)] transition hover:-translate-y-0.5 hover:shadow-lg">
+              <Link key={l.id} href={`/dashboard/classes/${l.class_id}?month=${l.month}#live`} className="flex items-center gap-4 rounded-2xl bg-card p-5 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg">
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-red-50 text-red-500"><Radio className="h-5 w-5" /></span>
                 <span className="min-w-0">
                   <span className="block truncate font-semibold">{l.title}</span>
-                  <span className="block truncate text-sm text-slate-500">{l.classes?.title}</span>
+                  <span className="block truncate text-sm text-muted-foreground">{l.classes?.title}</span>
                   <span className="mt-1 block text-xs font-semibold text-teal-600">{f.dateTime(l.live_start_time)}</span>
                 </span>
               </Link>

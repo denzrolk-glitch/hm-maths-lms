@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-const ALLOWED = new Set(["tute-pdfs", "bank-slips", "answer-sheets"]);
+const ALLOWED = new Set(["tute-pdfs", "bank-slips", "answer-sheets", "papers"]);
 
 /**
  * Short-lived signed download link for private files. Signing uses the *user's* session, so the

@@ -2,6 +2,7 @@ import { LandingNav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
 import { Announcements } from "@/components/landing/announcements";
 import { Story } from "@/components/landing/story";
+import { Features } from "@/components/landing/features";
 import { Testimonials } from "@/components/landing/testimonials";
 import { ClassesCarousel, type CarouselClass } from "@/components/landing/classes-carousel";
 import { Channels } from "@/components/landing/channels";
@@ -9,7 +10,7 @@ import { CtaOrbit } from "@/components/landing/cta-orbit";
 import { Faq } from "@/components/landing/faq";
 import { LandingFooter } from "@/components/landing/footer";
 import { getSession } from "@/lib/auth";
-import { getT } from "@/i18n/server";
+import { getScheduleLabel, getT } from "@/i18n/server";
 import { SITE } from "@/content/site";
 import { publicImage } from "@/lib/public-image";
 import type { ClassRow } from "@/lib/types";
@@ -17,7 +18,7 @@ import type { ClassRow } from "@/lib/types";
 type Placeholder = { title: string; type: string; year: number; lines: string[] };
 
 export default async function HomePage() {
-  const [{ supabase, user, profile }, t] = await Promise.all([getSession(), getT("landing")]);
+  const [{ supabase, user, profile }, t, sched] = await Promise.all([getSession(), getT("landing"), getScheduleLabel()]);
   const { data } = await supabase.from("classes").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(10);
   const rows = (data ?? []) as ClassRow[];
 
@@ -27,7 +28,7 @@ export default async function HomePage() {
     ? rows.map((c) => {
         const own = (c.description ?? "").split(/\r?\n/).map((l) => l.replace(/^[-•*]\s*/, "").trim()).filter(Boolean).slice(0, 4);
         return {
-        id: c.id, title: c.title, type: c.class_type, year: c.target_year, town: c.town, schedule: c.schedule,
+        id: c.id, title: c.title, type: c.class_type, year: c.target_year, town: c.town, schedule: sched(c),
         fee: Number(c.fee), isFree: c.is_free, banner: c.banner_url,
         lines: own.length ? own : defaultLines(c.class_type),
         };
@@ -38,12 +39,13 @@ export default async function HomePage() {
 
   const account = !user ? "guest" : profile?.role === "admin" ? "admin" : "student";
   return (
-    <div className="bg-[#050505] text-white">
+    <div className="relative bg-gradient-to-b from-[#f3f9ff] via-white to-[#eef7ff] text-ink dark:from-[#060b1a] dark:via-[#070d1f] dark:to-[#060b1a] dark:text-white">
       <LandingNav account={account} />
       <main>
         <Hero heroImage={publicImage(SITE.heroImage)} />
         <Announcements />
         <Story />
+        <Features />
         <Testimonials videoId={SITE.testimonialVideoId} />
         <ClassesCarousel classes={classes} />
         <Channels />

@@ -32,7 +32,7 @@ export default async function LessonPage({ params }: { params: Promise<{ classId
 
   return (
     <div className="space-y-6">
-      <Link href={`/dashboard/classes/${classId}?month=${lesson.month}`} className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
+      <Link href={`/dashboard/classes/${classId}?month=${lesson.month}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary">
         <ArrowLeft className="h-4 w-4" /> {lesson.classes?.title} · {f.month(lesson.month)}
       </Link>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
@@ -40,9 +40,9 @@ export default async function LessonPage({ params }: { params: Promise<{ classId
           {vid ? (
             <VideoPlayer videoId={vid} title={lesson.title} watermark={{ mobile: profile.mobile, nic: profile.nic, studentId: profile.student_id }} />
           ) : (
-            <div className="flex aspect-video items-center justify-center rounded-2xl bg-white text-sm text-muted-foreground">{t("noRecording")}</div>
+            <div className="flex aspect-video items-center justify-center rounded-2xl bg-card text-sm text-muted-foreground">{t("noRecording")}</div>
           )}
-          <div className="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-2xl bg-card p-5 shadow-soft sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">{t("week", { n: lesson.week_number })}</p>
               <h1 className="font-display text-xl font-bold">{lesson.title}</h1>
@@ -54,7 +54,7 @@ export default async function LessonPage({ params }: { params: Promise<{ classId
           </div>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldAlert className="h-3.5 w-3.5" /> {t("watermark")}</p>
         </div>
-        <aside className="rounded-2xl bg-card p-3 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+        <aside className="rounded-2xl bg-card p-3 shadow-soft">
           <p className="px-2 pb-2 text-sm font-semibold">{t("inMonth", { month: f.month(lesson.month) })}</p>
           <div className="space-y-1">
             {(siblings ?? []).map((s) => (

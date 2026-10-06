@@ -47,7 +47,7 @@ export function Gauge({ value, label }: { value: number; label: string }) {
           strokeDasharray={c} initial={{ strokeDashoffset: c }} whileInView={{ strokeDashoffset: c - (c * v) / 100 }} viewport={{ once: true }}
           transition={{ duration: 1.2, ease: "easeOut" }} />
         <defs>
-          <linearGradient id="gauge" x1="0" x2="1"><stop offset="0" stopColor="#1f807b" /><stop offset="1" stopColor="#2bb3aa" /></linearGradient>
+          <linearGradient id="gauge" x1="0" x2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#14b0e6" /></linearGradient>
         </defs>
       </svg>
       <div className="absolute inset-x-0 bottom-1 text-center">

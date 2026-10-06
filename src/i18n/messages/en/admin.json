@@ -8,7 +8,8 @@
     "students": "Students",
     "store": "Store & orders",
     "studentView": "Student view",
-    "administrator": "Administrator"
+    "administrator": "Administrator",
+    "papers": "Papers & marks"
   },
   "overview": {
     "title": "Admin overview",
@@ -28,7 +29,23 @@
       "month": "Month",
       "submitted": "Submitted",
       "status": "Status"
-    }
+    },
+    "hello": "Hello, {name} 👋",
+    "reviewSlips": "Review slips",
+    "quick": {
+      "paper": "New paper",
+      "class": "New class",
+      "notice": "Post notice",
+      "store": "Store & orders"
+    },
+    "papers": "Recent papers",
+    "allPapers": "All papers",
+    "outOf": "Out of {total}",
+    "noPapers": "No papers yet.",
+    "topMonth": "Top students this month",
+    "papersN": "{n} papers",
+    "noRanks": "No marks entered this month.",
+    "centers": "Students per center"
   },
   "payments": {
     "title": "Bank Slip Approval Center",
@@ -47,7 +64,8 @@
     "submitted": "Submitted",
     "reference": "Reference",
     "note": "Note",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "delivery": "Delivery address"
   },
   "classes": {
     "title": "Classes & content",
@@ -73,7 +91,19 @@
     "recording": "Recording",
     "tute": "Tute",
     "edit": "Edit",
-    "deleteLesson": "Delete this lesson (and its tute PDF)?"
+    "deleteLesson": "Delete this lesson (and its tute PDF)?",
+    "noTimetable": "No weekly timetable yet",
+    "nextClass": "Next class",
+    "upcomingCount": "Upcoming sessions",
+    "timetable": "Weekly timetable",
+    "timetableHint": "Create every class of a month in one click from the weekly days & time.",
+    "noDefaultLink": "No default live link",
+    "editTimetable": "Edit timetable",
+    "addSession": "Add a session",
+    "addSessionHint": "Extra class, a one-off session or a recording-only lesson.",
+    "upcoming": "Upcoming sessions",
+    "noUpcoming": "No upcoming sessions. Generate this month's classes or add an extra class.",
+    "noLink": "No live link"
   },
   "forms": {
     "delete": "Delete",
@@ -100,7 +130,17 @@
       "active": "Active (visible in store)",
       "free": "Free (Free Zone)",
       "save": "Save class",
-      "create": "Create class"
+      "create": "Create class",
+      "timetable": "Weekly timetable",
+      "days": "Class days",
+      "startTime": "Start time (Sri Lanka)",
+      "duration": "Class length",
+      "defaultLink": "Usual live link",
+      "defaultLinkHint": "YouTube Live, Zoom or Google Meet. Copied to every generated session — you can change any single session later.",
+      "note": "Timetable note (optional)",
+      "notePh": "Hall: Panadura Public Library",
+      "preview": "Students see:",
+      "noDays": "Pick class days and a start time"
     },
     "lesson": {
       "week": "Week",
@@ -112,11 +152,25 @@
       "youtubeHint": "Leave empty until the recording is ready",
       "liveStart": "Live session start (Sri Lanka time)",
       "liveUrl": "Live link (YouTube Live / Zoom)",
-      "liveUrlHint": "Hidden from students until 20 min before start",
+      "liveUrlHint": "YouTube Live, Zoom or Meet. Hidden from students until 20 min before start.",
       "tute": "Tute PDF",
       "tuteUpload": "Upload tute PDF",
       "save": "Save lesson",
-      "add": "Add lesson"
+      "add": "Add lesson",
+      "type": "Session type",
+      "extraTitlePh": "Extra class — Past paper discussion",
+      "date": "Date",
+      "time": "Start time",
+      "duration": "Length",
+      "classDefault": "Class default ({d})",
+      "noDateHint": "No date = recording / tute only lesson",
+      "liveNeedsDate": "Pick a date & time to add a live link",
+      "more": "Recording, notes & tute PDF",
+      "cancelled": "Cancelled (students see “Cancelled”, link stays hidden)",
+      "addExtra": "Add extra class",
+      "cancel": "Cancel session",
+      "restore": "Restore session",
+      "cancelConfirm": "Cancel this session? Students will see it as cancelled."
     },
     "review": {
       "note": "Note (optional, shown to student)",
@@ -192,6 +246,13 @@
       "imageUpload": "Upload image",
       "active": "Active",
       "add": "Add product"
+    },
+    "generate": {
+      "prefix": "Session title",
+      "submit": "Create sessions",
+      "working": "Creating…",
+      "needTimetable": "Set the class days and start time first.",
+      "setTimetable": "Set timetable →"
     }
   },
   "exams": {
@@ -285,5 +346,96 @@
     "active": "Active",
     "hidden": "Hidden",
     "noProducts": "No products yet."
+  },
+  "navGroups": {
+    "manage": "Manage",
+    "assess": "Assess",
+    "engage": "Engage"
+  },
+  "crumbs": {
+    "payments": "Slip approvals",
+    "classes": "Classes",
+    "exams": "Exams",
+    "notices": "Notices",
+    "students": "Students",
+    "store": "Store",
+    "papers": "Papers",
+    "new": "New",
+    "details": "Details"
+  },
+  "papers": {
+    "title": "Papers & marks",
+    "subtitle": "Create papers, upload files and enter marks — leaderboards update instantly.",
+    "new": "New paper",
+    "newHint": "Name the paper, set total marks and (optionally) upload the paper & answers.",
+    "migrate": "Run supabase/migrations/0003_papers_leaderboards.sql in the Supabase SQL editor to enable papers.",
+    "stats": {
+      "papers": "Papers",
+      "entries": "Mark entries",
+      "latest": "Latest paper",
+      "average": "Average",
+      "top": "Top marks",
+      "pass": "Pass rate"
+    },
+    "draft": "Draft",
+    "allBatches": "All batches",
+    "outOf": "Out of {total}",
+    "entries": "entries",
+    "top": "top",
+    "emptyTitle": "No papers yet",
+    "emptyText": "Create your first weekly paper to start the leaderboard.",
+    "back": "All papers",
+    "paperFile": "Paper",
+    "answersFile": "Answers",
+    "avgMarks": "{marks} / {total} average",
+    "results": "Results ({n})",
+    "studentView": "Student view",
+    "cols": {
+      "student": "Student",
+      "center": "Center",
+      "marks": "Marks"
+    },
+    "noMarks": "No marks entered yet — search a student above to add marks.",
+    "distribution": "Grade distribution",
+    "edit": "Edit paper",
+    "delete": "Delete paper",
+    "deleteConfirm": "Delete this paper and all its marks?",
+    "form": {
+      "title": "Paper name",
+      "titleHint": "Shown to students and on leaderboards.",
+      "titlePlaceholder": "Week 12 — Differentiation",
+      "type": "Paper type",
+      "date": "Paper date",
+      "total": "Total marks",
+      "batch": "Batch",
+      "allBatches": "All batches",
+      "class": "Class",
+      "classHint": "Optional — link to a class.",
+      "noClass": "No class",
+      "description": "Description",
+      "descriptionPlaceholder": "Topics covered, instructions…",
+      "paperFile": "Paper file",
+      "answersFile": "Answers file",
+      "optional": "optional",
+      "upload": "Upload PDF / image",
+      "published": "Visible to students",
+      "publishedOn": "Published",
+      "publishedOff": "Draft (hidden)",
+      "create": "Create paper"
+    },
+    "entry": {
+      "search": "Find student",
+      "searchHint": "Search by mobile, student ID or name",
+      "noMatch": "No students found.",
+      "range": "0 – {total}",
+      "current": "Current: {marks}",
+      "marks": "Marks",
+      "marksFor": "Marks for {name}",
+      "remark": "Remark (optional)",
+      "save": "Save",
+      "saved": "Saved {name}: {marks}/{total}",
+      "removeConfirm": "Remove the mark for {name}?",
+      "remove": "Remove"
+    }
   }
 }

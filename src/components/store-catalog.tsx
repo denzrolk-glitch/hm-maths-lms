@@ -33,8 +33,8 @@ export async function StoreCatalog({ classes, products }: { classes: ClassRow[];
         {products.length ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p) => (
-              <Link key={p.id} href={`/dashboard/store/product/${p.id}`} className="group overflow-hidden rounded-2xl border bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)] transition hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="relative aspect-[4/3] bg-gradient-to-br from-[#17191e] to-teal-700">
+              <Link key={p.id} href={`/dashboard/store/product/${p.id}`} className="group overflow-hidden rounded-2xl border bg-card shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg">
+                <div className="relative aspect-[4/3] bg-gradient-to-br from-teal-600 to-brand-400">
                   {p.image_url ? <Image src={p.image_url} alt={p.title} fill sizes="300px" className="object-cover" /> :
                     <Package className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 text-white/40" />}
                 </div>

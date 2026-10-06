@@ -6,6 +6,8 @@ Production-ready tuition LMS (pb.lk-style design, English + සිංහල) on 
 
 1. Supabase Dashboard → **SQL Editor → New query** → paste `supabase/migrations/0001_init.sql` → **Run**.
    It creates all tables, triggers, RLS policies, RPCs, the 4 storage buckets and enables Realtime for notices. It is safe to re-run.
+   Then run `supabase/migrations/0002_class_schedule.sql` the same way (weekly timetable, extra/cancelled sessions, protected live links + session generator). Also safe to re-run.
+   Then run `supabase/migrations/0003_papers_leaderboards.sql` (student delivery address, papers + marks, center/all-island leaderboards, paper & study streaks, private `papers` storage bucket). Also safe to re-run.
 2. The admin login (`admin@nativelaunch.xyz`) is already created in Auth; the script promotes it to `admin` automatically.
    To create/reset an admin later: `npm run create-admin -- you@example.com "NewPassword"`.
 3. Verify everything live: `npm run verify` (creates temporary users/classes, tests every security rule, then deletes them).

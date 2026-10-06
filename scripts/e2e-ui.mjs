@@ -52,15 +52,16 @@ async function solveCaptcha(page) {
 try {
   // ── Seed content as admin (service role) ──
   console.log("Seed");
-  const { data: cls } = await svc.from("classes").insert({ title: `${tag} 2027 A/L Theory`, description: "Pure Maths — Functions\nApplied — Vectors\nWeekly tute", class_type: "Theory", target_year: 2027, town: "Panadura", fee: 3500, schedule: "Every Saturday 8.00 AM", is_active: true }).select().single();
+  const { data: cls } = await svc.from("classes").insert({ title: `${tag} 2027 A/L Theory`, description: "Pure Maths — Functions\nApplied — Vectors\nWeekly tute", class_type: "Theory", target_year: 2027, town: "Panadura", fee: 3500, schedule_days: [6], start_time: "08:00", duration_minutes: 240, is_active: true }).select().single();
   const { data: free } = await svc.from("classes").insert({ title: `${tag} Free Seminar`, class_type: "Free Seminar", target_year: 2027, fee: 0, is_free: true, is_active: true }).select().single();
   cleanup.classes.push(cls.id, free.id);
   const soon = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-  await svc.from("lessons").insert([
+  const { data: seeded } = await svc.from("lessons").insert([
     { class_id: cls.id, month, week_number: 1, title: `${tag} Functions — intro`, youtube_url: "https://youtu.be/dQw4w9WgXcQ" },
-    { class_id: cls.id, month, week_number: 2, title: `${tag} Live: Vectors`, live_start_time: soon, live_url: "https://zoom.us/j/123456789" },
+    { class_id: cls.id, month, week_number: 2, title: `${tag} Live: Vectors`, live_start_time: soon, session_type: "extra" },
     { class_id: free.id, month, week_number: 1, title: `${tag} Orientation`, youtube_url: "https://youtu.be/dQw4w9WgXcQ" },
-  ]);
+  ]).select("id, live_start_time");
+  await svc.from("lesson_live_links").insert({ lesson_id: seeded.find((l) => l.live_start_time).id, live_url: "https://zoom.us/j/123456789" });
   const { data: exam } = await svc.from("exams").insert({ class_id: cls.id, title: `${tag} Unit Test`, duration_minutes: 15, is_published: true }).select().single();
   await svc.from("exam_questions").insert([
     { exam_id: exam.id, question_text: "2 + 2 = ?", options_json: ["3", "4", "5"], correct_answer: 1, sort_order: 1 },
@@ -187,7 +188,7 @@ try {
   await shot(sp, "student-classes-paid");
   await go(sp, `/dashboard/classes/${cls.id}`); await shot(sp, "student-classroom");
   check(await sp.locator(`text=${tag} Functions — intro`).count() > 0, "recording listed in classroom");
-  check(await sp.locator("text=/Join opens|Class starts in|Starting in|Join Live/").count() > 0, "live session countdown shown");
+  check(await sp.locator("text=/Join opens|Class starts in|Starting in|Join Live|Join on/").count() > 0, "live session countdown shown");
   const { data: les } = await svc.from("lessons").select("id").eq("class_id", cls.id).eq("week_number", 1).single();
   await go(sp, `/dashboard/classes/${cls.id}/lessons/${les.id}`); await sp.waitForTimeout(1000); await shot(sp, "student-lesson");
   check(await sp.locator("iframe[src*='youtube']").count() > 0 || await sp.locator("[data-video]").count() > 0 || await sp.locator("text=watermarked").count() > 0, "lesson player rendered");

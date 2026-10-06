@@ -18,7 +18,7 @@ export default async function StorePage() {
   return (
     <div>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="rounded-2xl bg-card text-card-foreground border border-border p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:p-6">
+      <div className="rounded-2xl bg-card text-card-foreground border border-border p-5 shadow-soft sm:p-6">
         <StoreCatalog classes={(classes ?? []) as ClassRow[]} products={(products ?? []) as Product[]} />
       </div>
     </div>

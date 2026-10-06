@@ -2,11 +2,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const GRADIENTS: Record<string, string> = {
-  Theory: "from-[#f05b06] via-[#c2410c] to-[#431407]",
-  Revision: "from-[#1f807b] via-[#0f766e] to-[#042f2e]",
-  "Paper Class": "from-[#7c3aed] via-[#5b21b6] to-[#1e1b4b]",
-  "Extra Class": "from-[#e11d48] via-[#9f1239] to-[#4c0519]",
-  "Free Seminar": "from-[#334155] via-[#1e293b] to-[#020617]",
+  Theory: "from-[#1963d4] via-[#1f7ae8] to-[#41c9f5]",
+  Revision: "from-[#0e5d82] via-[#068dc4] to-[#7fdffb]",
+  "Paper Class": "from-[#4338ca] via-[#6366f1] to-[#38bdf8]",
+  "Extra Class": "from-[#be185d] via-[#ec4899] to-[#f9a8d4]",
+  "Free Seminar": "from-[#0f766e] via-[#14b8a6] to-[#5eead4]",
 };
 const SYMBOLS: Record<string, string> = { Theory: "∫", Revision: "Σ", "Paper Class": "π", "Extra Class": "√", "Free Seminar": "∞" };
 

@@ -21,7 +21,7 @@ export default async function NoticesPage({ searchParams }: { searchParams: Prom
   const notices = await getNotices(supabase, 100, valid);
   const { data: classes } = await supabase.from("classes").select("id, title");
   const className = new Map((classes ?? []).map((c) => [c.id, c.title]));
-  const pill = (active: boolean) => cn("rounded-full px-4 py-1.5 text-xs font-semibold transition", active ? "bg-teal-500 text-white" : "bg-white/10 text-white/80 hover:bg-white/20");
+  const pill = (active: boolean) => cn("rounded-full px-4 py-1.5 text-xs font-semibold transition", active ? "bg-primary text-primary-foreground shadow-md shadow-primary/25" : "bg-card border text-muted-foreground hover:text-foreground hover:border-primary/30");
 
   return (
     <div>
@@ -35,7 +35,7 @@ export default async function NoticesPage({ searchParams }: { searchParams: Prom
       {!notices.length ? <EmptyState icon={Bell} title={t("empty")} description={t("emptyText")} /> : (
         <div className="space-y-3">
           {notices.map((n) => (
-            <article key={n.id} className={cn("rounded-2xl border border-transparent bg-card p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)]", n.tag === "Urgent" && "border-destructive/40", n.is_pinned && "ring-1 ring-primary/30")}>
+            <article key={n.id} className={cn("rounded-2xl border border-transparent bg-card p-5 shadow-soft", n.tag === "Urgent" && "border-destructive/40", n.is_pinned && "ring-1 ring-primary/30")}>
               <div className="flex flex-wrap items-center gap-2">
                 <NoticeTagBadge tag={n.tag} />
                 {n.is_pinned && <span className="flex items-center gap-1 text-xs font-medium text-primary"><Pin className="h-3 w-3" />{t("pinned")}</span>}

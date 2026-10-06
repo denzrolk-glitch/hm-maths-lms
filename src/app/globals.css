@@ -4,60 +4,62 @@
 
 @layer base {
   :root {
-    --background: 222 38% 97%;
-    --foreground: 224 47% 11%;
+    --background: 210 50% 98%;
+    --foreground: 222 47% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 224 47% 11%;
+    --card-foreground: 222 47% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 47% 11%;
-    --primary: 177 61% 31%;
+    --popover-foreground: 222 47% 12%;
+    --primary: 213 81% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 20% 95%;
-    --secondary-foreground: 224 47% 15%;
-    --muted: 220 20% 96%;
-    --muted-foreground: 220 9% 44%;
-    --accent: 175 35% 94%;
-    --accent-foreground: 177 61% 24%;
+    --secondary: 212 45% 95%;
+    --secondary-foreground: 222 47% 18%;
+    --muted: 212 40% 96%;
+    --muted-foreground: 217 15% 45%;
+    --accent: 210 100% 96%;
+    --accent-foreground: 214 75% 38%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 63% 36%;
     --success-foreground: 0 0% 100%;
     --warning: 32 95% 44%;
     --warning-foreground: 0 0% 100%;
-    --border: 220 16% 90%;
-    --input: 220 16% 86%;
-    --ring: 177 61% 38%;
-    --radius: 0.75rem;
-    --portal-head: 222 13% 10%;
+    --border: 214 35% 90%;
+    --input: 214 30% 86%;
+    --ring: 213 81% 52%;
+    --radius: 0.9rem;
+    --portal-head: 222 47% 12%;
   }
   .dark {
-    --background: 229 41% 6%;
-    --foreground: 220 20% 96%;
-    --card: 229 35% 9%;
-    --card-foreground: 220 20% 96%;
-    --popover: 229 35% 9%;
-    --popover-foreground: 220 20% 96%;
-    --primary: 175 55% 45%;
-    --primary-foreground: 180 50% 6%;
-    --secondary: 229 25% 15%;
-    --secondary-foreground: 220 20% 96%;
-    --muted: 229 25% 13%;
-    --muted-foreground: 220 12% 65%;
-    --accent: 177 25% 16%;
-    --accent-foreground: 175 60% 80%;
+    --background: 224 50% 6%;
+    --foreground: 214 40% 96%;
+    --card: 224 42% 9%;
+    --card-foreground: 214 40% 96%;
+    --popover: 224 42% 10%;
+    --popover-foreground: 214 40% 96%;
+    --primary: 211 92% 62%;
+    --primary-foreground: 224 60% 8%;
+    --secondary: 224 32% 15%;
+    --secondary-foreground: 214 40% 96%;
+    --muted: 224 32% 13%;
+    --muted-foreground: 216 18% 66%;
+    --accent: 216 45% 16%;
+    --accent-foreground: 210 90% 80%;
     --destructive: 0 72% 58%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 55% 48%;
     --success-foreground: 150 60% 6%;
     --warning: 38 92% 56%;
     --warning-foreground: 30 60% 6%;
-    --border: 229 22% 18%;
-    --input: 229 22% 22%;
-    --ring: 175 55% 45%;
-    --portal-head: 222 13% 7%;
+    --border: 222 30% 18%;
+    --input: 222 30% 22%;
+    --ring: 211 92% 62%;
+    --portal-head: 224 50% 6%;
   }
   * { @apply border-border; }
-  html { -webkit-tap-highlight-color: transparent; }
+  html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  ::selection { background: hsl(var(--primary) / .18); }
   body { @apply bg-background text-foreground antialiased; font-feature-settings: "cv11", "ss01"; }
   html[lang="si"] body { line-height: 1.65; }
   html[lang="si"] * { letter-spacing: normal !important; }
@@ -80,7 +82,7 @@
       linear-gradient(to bottom, hsl(var(--border) / 0.6) 1px, transparent 1px);
     background-size: 40px 40px;
   }
-  .text-gradient { @apply bg-gradient-to-r from-brand-500 via-orange-500 to-amber-400 bg-clip-text text-transparent; }
+  .text-gradient { @apply bg-gradient-to-r from-teal-600 via-teal-500 to-brand-400 bg-clip-text text-transparent; padding-bottom: .08em; }
   /* pb-style beige heading gradient used on the dark landing page - padded to prevent Sinhala descender clipping */
   .text-sand {
     background: linear-gradient(180deg, #efe4d9 0%, #b5a69c 100%);
@@ -97,8 +99,32 @@
   }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
-  /* Student portal: page titles sit on the dark band under the top bar */
-  .portal .ph h1 { color: #fff; }
-  .portal .ph > div > p { color: rgb(255 255 255 / 0.6); }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .glass { @apply border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60; }
+  .bg-mesh {
+    background-image:
+      radial-gradient(at 12% 8%, hsl(205 100% 88% / .75) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(190 95% 85% / .6) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(225 100% 92% / .55) 0, transparent 45%);
+  }
+  .dark .bg-mesh {
+    background-image:
+      radial-gradient(at 12% 8%, hsl(213 80% 30% / .35) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(195 90% 30% / .25) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(230 70% 30% / .25) 0, transparent 45%);
+  }
+  .bg-dots {
+    background-image: radial-gradient(hsl(var(--primary) / .18) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  .skeleton {
+    @apply rounded-xl bg-muted;
+    background-image: linear-gradient(90deg, transparent, hsl(var(--card) / .7), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
   .no-select { user-select: none; -webkit-user-select: none; }
 }
+
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }

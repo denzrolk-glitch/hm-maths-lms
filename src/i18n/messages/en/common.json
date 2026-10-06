@@ -91,7 +91,9 @@
     "account": "Account",
     "helpDesk": "Help Desk",
     "privacy": "Privacy Policy",
-    "backToSite": "Back to website"
+    "backToSite": "Back to website",
+    "adminConsole": "Admin console",
+    "more": "More"
   },
   "file": {
     "choose": "Choose file",
@@ -135,7 +137,9 @@
     "join": "Join Live Class",
     "liveNow": "LIVE NOW",
     "startingIn": "Starting in {min} min",
-    "loading": "Loading join link…"
+    "loading": "Loading join link…",
+    "joinOn": "Join on {platform}",
+    "noLink": "The join link will be shared soon — please check back in a minute."
   },
   "notices": {
     "newNotice": "New notice: {title}"
@@ -175,5 +179,36 @@
   "copy": {
     "copy": "Copy",
     "copied": "Copied!"
+  },
+  "schedule": {
+    "days": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ],
+    "every": "Every {days}",
+    "and": "&",
+    "types": {
+      "regular": "Regular class",
+      "extra": "Extra class"
+    },
+    "cancelled": "Cancelled",
+    "platforms": {
+      "youtube": "YouTube Live",
+      "zoom": "Zoom",
+      "meet": "Google Meet",
+      "teams": "Microsoft Teams",
+      "other": "Live link"
+    }
+  },
+  "paperTypes": {
+    "weekly": "Weekly paper",
+    "monthly": "Monthly paper",
+    "model": "Model paper",
+    "term": "Term test"
   }
 }

@@ -11,7 +11,9 @@
     "dashboard": "My Dashboard",
     "admin": "Admin Panel",
     "menu": "Open menu",
-    "close": "Close menu"
+    "close": "Close menu",
+    "features": "Features",
+    "register": "Register"
   },
   "hero": {
     "kicker": "G.C.E. A/L Combined Mathematics",
@@ -22,7 +24,22 @@
     "ctaPrimary": "Register Now",
     "ctaSecondary": "Free Seminars",
     "imageAlt": "Hasitha Madusanka",
-    "scroll": "Scroll"
+    "scroll": "Scroll",
+    "new": "New",
+    "newText": "Weekly papers, leaderboards & streaks are live",
+    "stats": {
+      "centers": "Class centers",
+      "recordings": "Recordings",
+      "access": "Access anywhere"
+    },
+    "cards": {
+      "rank": "#1 in Panadura",
+      "rankSub": "Weekly paper leaderboard",
+      "live": "Live now",
+      "liveSub": "Theory class · Zoom",
+      "streak": "6-week streak",
+      "streakSub": "All-island top 10"
+    }
   },
   "announcements": {
     "label": "Announcements",
@@ -40,11 +57,31 @@
     "label": "Our Story",
     "title": "A journey of excellence",
     "milestones": [
-      { "icon": "spark", "title": "Where it began", "text": "Started with a handful of students in Panadura and a simple belief: every student can master Combined Maths with the right guidance." },
-      { "icon": "map", "title": "Five centers", "text": "Panadura, Horana, Mathugama and Kalutara class halls — plus island-wide online classes for students anywhere in Sri Lanka." },
-      { "icon": "video", "title": "Learn anytime", "text": "Every lesson is recorded in HD and organised week by week, so you can revise at your own pace, as many times as you need." },
-      { "icon": "paper", "title": "Exam-ready practice", "text": "Timed online MCQ papers with instant marks, full review mode and a batch leaderboard to keep you sharp." },
-      { "icon": "trophy", "title": "Results that speak", "text": "Year after year, our students walk into the exam hall confident — and walk out with the results they worked for." }
+      {
+        "icon": "spark",
+        "title": "Where it began",
+        "text": "Started with a handful of students in Panadura and a simple belief: every student can master Combined Maths with the right guidance."
+      },
+      {
+        "icon": "map",
+        "title": "Five centers",
+        "text": "Panadura, Horana, Mathugama and Kalutara class halls — plus island-wide online classes for students anywhere in Sri Lanka."
+      },
+      {
+        "icon": "video",
+        "title": "Learn anytime",
+        "text": "Every lesson is recorded in HD and organised week by week, so you can revise at your own pace, as many times as you need."
+      },
+      {
+        "icon": "paper",
+        "title": "Exam-ready practice",
+        "text": "Timed online MCQ papers with instant marks, full review mode and a batch leaderboard to keep you sharp."
+      },
+      {
+        "icon": "trophy",
+        "title": "Results that speak",
+        "text": "Year after year, our students walk into the exam hall confident — and walk out with the results they worked for."
+      }
     ]
   },
   "testimonials": {
@@ -57,10 +94,26 @@
     "previous": "Previous testimonial",
     "next": "Next testimonial",
     "items": [
-      { "name": "Sanduni Perera", "meta": "2025 A/L · Panadura", "text": "Sir explains every theory from the basics. The weekly paper classes completely changed how I manage time in the exam." },
-      { "name": "Kavindu Fernando", "meta": "2025 A/L · Online", "text": "I missed a few live classes because of school, but the recordings and tutes helped me catch up within the same week." },
-      { "name": "Nethmi Silva", "meta": "2024 A/L · Horana", "text": "The online MCQ papers with the leaderboard made practice fun. I could see my progress every single month." },
-      { "name": "Isuru Jayasinghe", "meta": "2024 A/L · Kalutara", "text": "Mechanics was my weakest area. Sir's short methods and revision classes made it my strongest by the final exam." }
+      {
+        "name": "Sanduni Perera",
+        "meta": "2025 A/L · Panadura",
+        "text": "Sir explains every theory from the basics. The weekly paper classes completely changed how I manage time in the exam."
+      },
+      {
+        "name": "Kavindu Fernando",
+        "meta": "2025 A/L · Online",
+        "text": "I missed a few live classes because of school, but the recordings and tutes helped me catch up within the same week."
+      },
+      {
+        "name": "Nethmi Silva",
+        "meta": "2024 A/L · Horana",
+        "text": "The online MCQ papers with the leaderboard made practice fun. I could see my progress every single month."
+      },
+      {
+        "name": "Isuru Jayasinghe",
+        "meta": "2024 A/L · Kalutara",
+        "text": "Mechanics was my weakest area. Sir's short methods and revision classes made it my strongest by the final exam."
+      }
     ]
   },
   "classes": {
@@ -76,11 +129,56 @@
     "next": "Next class",
     "goTo": "Go to slide {n}",
     "placeholders": [
-      { "title": "2026 A/L Theory", "type": "Theory", "year": 2026, "lines": ["Pure Maths — Differentiation", "Applied — Newton's laws", "Weekly tute + recording"] },
-      { "title": "2026 A/L Revision", "type": "Revision", "year": 2026, "lines": ["Full syllabus revision", "Past paper discussions", "Short methods & tricks"] },
-      { "title": "2027 A/L Theory", "type": "Theory", "year": 2027, "lines": ["Pure Maths — Functions", "Applied — Vectors", "Weekly tute + recording"] },
-      { "title": "Paper Class", "type": "Paper Class", "year": 2026, "lines": ["Model paper every week", "Marking & discussion", "Batch leaderboard"] },
-      { "title": "Free Seminar", "type": "Free Seminar", "year": 2028, "lines": ["Introduction to A/L Maths", "Study plan for beginners", "Open to everyone"] }
+      {
+        "title": "2026 A/L Theory",
+        "type": "Theory",
+        "year": 2026,
+        "lines": [
+          "Pure Maths — Differentiation",
+          "Applied — Newton's laws",
+          "Weekly tute + recording"
+        ]
+      },
+      {
+        "title": "2026 A/L Revision",
+        "type": "Revision",
+        "year": 2026,
+        "lines": [
+          "Full syllabus revision",
+          "Past paper discussions",
+          "Short methods & tricks"
+        ]
+      },
+      {
+        "title": "2027 A/L Theory",
+        "type": "Theory",
+        "year": 2027,
+        "lines": [
+          "Pure Maths — Functions",
+          "Applied — Vectors",
+          "Weekly tute + recording"
+        ]
+      },
+      {
+        "title": "Paper Class",
+        "type": "Paper Class",
+        "year": 2026,
+        "lines": [
+          "Model paper every week",
+          "Marking & discussion",
+          "Batch leaderboard"
+        ]
+      },
+      {
+        "title": "Free Seminar",
+        "type": "Free Seminar",
+        "year": 2028,
+        "lines": [
+          "Introduction to A/L Maths",
+          "Study plan for beginners",
+          "Open to everyone"
+        ]
+      }
     ]
   },
   "channels": {
@@ -106,14 +204,38 @@
     "more": "See more questions",
     "less": "Show fewer questions",
     "items": [
-      { "q": "How do I register for a class?", "a": "Create a free account with your mobile number, then open the Store in your dashboard, choose your class and month, and upload your bank slip." },
-      { "q": "How do I pay the class fee?", "a": "Pay by bank deposit or online transfer to the account shown in the Store. Use your Student ID as the reference and upload a photo of the slip." },
-      { "q": "When will I get access after paying?", "a": "Your payment is checked manually. Once approved, the class month unlocks automatically — usually within a few hours." },
-      { "q": "Can I watch the recordings again?", "a": "Yes. Recordings for every month you have paid for stay available in My Classes, organised week by week." },
-      { "q": "When can I join a live class?", "a": "The Join button appears 20 minutes before the class starts. The link is shown only to students who have paid for that month." },
-      { "q": "I forgot my password. What should I do?", "a": "Contact us on WhatsApp with your Student ID and registered mobile number and we will reset it for you." },
-      { "q": "Are the online papers timed?", "a": "Yes. MCQ papers have a countdown timer and submit automatically when time runs out. You can review answers after the paper closes." },
-      { "q": "Do you deliver printed tutes?", "a": "Yes. Order tute books from the Store and they will be delivered island-wide to the address you provide." }
+      {
+        "q": "How do I register for a class?",
+        "a": "Create a free account with your mobile number, then open the Store in your dashboard, choose your class and month, and upload your bank slip."
+      },
+      {
+        "q": "How do I pay the class fee?",
+        "a": "Pay by bank deposit or online transfer to the account shown in the Store. Use your Student ID as the reference and upload a photo of the slip."
+      },
+      {
+        "q": "When will I get access after paying?",
+        "a": "Your payment is checked manually. Once approved, the class month unlocks automatically — usually within a few hours."
+      },
+      {
+        "q": "Can I watch the recordings again?",
+        "a": "Yes. Recordings for every month you have paid for stay available in My Classes, organised week by week."
+      },
+      {
+        "q": "When can I join a live class?",
+        "a": "The Join button appears 20 minutes before the class starts. The link is shown only to students who have paid for that month."
+      },
+      {
+        "q": "I forgot my password. What should I do?",
+        "a": "Contact us on WhatsApp with your Student ID and registered mobile number and we will reset it for you."
+      },
+      {
+        "q": "Are the online papers timed?",
+        "a": "Yes. MCQ papers have a countdown timer and submit automatically when time runs out. You can review answers after the paper closes."
+      },
+      {
+        "q": "Do you deliver printed tutes?",
+        "a": "Yes. Order tute books from the Store and they will be delivered island-wide to the address you provide."
+      }
     ]
   },
   "footer": {
@@ -123,5 +245,36 @@
     "links": "Quick Links",
     "rights": "© {year} Hasitha Madusanka · Combined Mathematics. All rights reserved.",
     "notice": "Recordings are watermarked. Sharing or re-recording is prohibited."
+  },
+  "features": {
+    "label": "Features",
+    "title": "Everything you need to score an A",
+    "subtitle": "One student portal for classes, papers, results and tutes — built for A/L Combined Maths.",
+    "items": {
+      "papers": {
+        "title": "Weekly papers & leaderboards",
+        "text": "Sit the weekly paper, get your marks online and see your rank in your center and all-island. Track every result on a progress chart."
+      },
+      "streaks": {
+        "title": "Streaks & badges",
+        "text": "Keep your weekly paper streak alive, build a daily study streak and unlock achievements as you improve."
+      },
+      "centers": {
+        "title": "Five class centers",
+        "text": "Panadura, Horana, Mathugama, Kalutara and island-wide online classes."
+      },
+      "live": {
+        "title": "Live classes",
+        "text": "Join Zoom or YouTube live classes straight from your dashboard — the link unlocks 20 minutes before class."
+      },
+      "recordings": {
+        "title": "HD recordings",
+        "text": "Missed a class? Watch the recording week by week, as many times as you need."
+      },
+      "delivery": {
+        "title": "Tutes delivered to your door",
+        "text": "Add your address once when you register — monthly tutes and books are posted island-wide to the address on your profile."
+      }
+    }
   }
 }

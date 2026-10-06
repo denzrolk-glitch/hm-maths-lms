@@ -49,7 +49,7 @@ export default async function AdminExamPage({ params }: { params: Promise<{ exam
           <h2 className="mb-3 font-display text-lg font-semibold">{t("questions", { n: qs.length })}</h2>
           <div className="space-y-2">
             {qs.map((q, i) => (
-              <div key={q.id} className="flex gap-3 rounded-2xl border border-slate-200/60 bg-card p-4">
+              <div key={q.id} className="flex gap-3 rounded-2xl border border-border/80 bg-card p-4 shadow-soft">
                 <span className="font-mono text-sm text-muted-foreground">{t("q", { n: i + 1 })}</span>
                 <div className="min-w-0 flex-1">
                   <p className="whitespace-pre-line font-medium">{q.question_text}</p>

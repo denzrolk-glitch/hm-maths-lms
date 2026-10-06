@@ -62,6 +62,9 @@ const profileSchema = z.object({
   school: z.string().trim().max(120).optional().default(""),
   district: z.string().trim().max(60).optional().default(""),
   town: z.enum(TOWNS),
+  address: z.string().trim().min(8).max(300),
+  city: z.string().trim().min(2).max(80),
+  postal_code: z.string().trim().regex(/^(\d{5})?$/).optional().default(""),
 });
 
 export async function updateProfileAction(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -70,7 +73,10 @@ export async function updateProfileAction(_p: ActionState, fd: FormData): Promis
   const parsed = profileSchema.safeParse(Object.fromEntries(fd));
   if (!parsed.success) return { error: t("profileInvalid") };
   const { error } = await supabase.from("profiles")
-    .update({ full_name: parsed.data.full_name, school: parsed.data.school || null, district: parsed.data.district || null, town: parsed.data.town })
+    .update({
+      full_name: parsed.data.full_name, school: parsed.data.school || null, district: parsed.data.district || null, town: parsed.data.town,
+      address: parsed.data.address, city: parsed.data.city, postal_code: parsed.data.postal_code || null,
+    })
     .eq("id", user.id);
   if (error) return { error: t("profileFailed") };
   revalidatePath("/dashboard", "layout");

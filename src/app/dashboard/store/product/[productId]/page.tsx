@@ -11,7 +11,8 @@ import { OrderForm } from "./order-form";
 
 export default async function ProductPage({ params }: { params: Promise<{ productId: string }> }) {
   const { productId } = await params;
-  const { supabase, user } = await requireUser();
+  const { supabase, user, profile } = await requireUser();
+  const defaultAddress = [profile.address, [profile.city, profile.postal_code].filter(Boolean).join(" ")].filter(Boolean).join("\n");
   const t = await getT("portal.order");
   const { data } = await supabase.from("products").select("*").eq("id", productId).eq("is_active", true).maybeSingle();
   if (!data) notFound();
@@ -19,8 +20,8 @@ export default async function ProductPage({ params }: { params: Promise<{ produc
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
       <div className="space-y-6">
-        <div className="overflow-hidden rounded-2xl bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)]">
-          <div className="relative aspect-[16/9] bg-gradient-to-br from-[#17191e] to-teal-700">
+        <div className="overflow-hidden rounded-2xl bg-card shadow-soft">
+          <div className="relative aspect-[16/9] bg-gradient-to-br from-teal-600 to-brand-400">
             {p.image_url ? <Image src={p.image_url} alt={p.title} fill className="object-cover" sizes="800px" /> :
               <Package className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 text-white/40" />}
           </div>
@@ -34,7 +35,7 @@ export default async function ProductPage({ params }: { params: Promise<{ produc
       </div>
       <Card className="lg:sticky lg:top-20 lg:self-start">
         <CardHeader><CardTitle>{t("title")}</CardTitle></CardHeader>
-        <CardContent><OrderForm productId={p.id} userId={user.id} /></CardContent>
+        <CardContent><OrderForm productId={p.id} userId={user.id} defaultAddress={defaultAddress} /></CardContent>
       </Card>
     </div>
   );

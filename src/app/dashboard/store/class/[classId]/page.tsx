@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { CalendarClock, CheckCircle2, MapPin } from "lucide-react";
+import { CalendarClock, CheckCircle2, MapPin, Truck } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { ClassBanner } from "@/components/class-banner";
 import { BankDetails } from "@/components/bank-details";
@@ -9,14 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert } from "@/components/ui/misc";
 import type { ClassRow } from "@/lib/types";
 import { currentMonth, formatLKR, shiftMonth } from "@/lib/utils";
-import { getFormat, getT } from "@/i18n/server";
+import { getFormat, getScheduleLabel, getT } from "@/i18n/server";
 import { EnrollForm, type MonthOption } from "./enroll-form";
 
 export default async function EnrollPage({ params, searchParams }: { params: Promise<{ classId: string }>; searchParams: Promise<{ month?: string }> }) {
   const { classId } = await params;
   const { month: wanted } = await searchParams;
-  const { supabase, user } = await requireUser();
-  const [t, tc, f] = await Promise.all([getT("portal.enroll"), getT("common"), getFormat()]);
+  const { supabase, user, profile } = await requireUser();
+  const [t, tc, f, sched] = await Promise.all([getT("portal.enroll"), getT("common"), getFormat(), getScheduleLabel()]);
   const { data } = await supabase.from("classes").select("*").eq("id", classId).maybeSingle();
   if (!data) notFound();
   const cls = data as ClassRow;
@@ -39,7 +40,7 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
       <div className="space-y-6">
-        <div className="overflow-hidden rounded-2xl bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+        <div className="overflow-hidden rounded-2xl bg-card shadow-soft">
           <ClassBanner cls={cls} />
           <div className="space-y-3 p-5">
             <div className="flex flex-wrap gap-2"><Badge>{tc(`classTypes.${cls.class_type}`)}</Badge>{cls.target_year && <Badge variant="secondary">{tc("alBatch", { year: cls.target_year })}</Badge>}</div>
@@ -47,7 +48,7 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
             {cls.description && <p className="whitespace-pre-line text-sm text-muted-foreground">{cls.description}</p>}
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {cls.town && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{tc(`towns.${cls.town}`)}</span>}
-              {cls.schedule && <span className="flex items-center gap-1.5"><CalendarClock className="h-4 w-4" />{cls.schedule}</span>}
+              {sched(cls) && <span className="flex items-center gap-1.5"><CalendarClock className="h-4 w-4" />{sched(cls)}</span>}
             </div>
             <p className="font-display text-xl font-bold">{tc("perMonth", { amount: formatLKR(cls.fee) })}</p>
           </div>
@@ -76,6 +77,16 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
           <CardContent className="space-y-4">
             {rejected.length > 0 && <Alert variant="error">{t("rejected")}</Alert>}
             {status.get(cur) === "approved" && <Alert variant="success"><CheckCircle2 className="mr-1 inline h-4 w-4" />{t("hasAccess", { month: f.month(cur) })}</Alert>}
+            <div className="flex items-start gap-3 rounded-2xl border border-primary/15 bg-accent/60 p-3 text-sm">
+              <Truck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div className="min-w-0">
+                <p className="font-semibold">{t("deliveryTitle")}</p>
+                {profile.address ? (
+                  <p className="whitespace-pre-line text-xs text-muted-foreground">{[profile.address, [profile.city, profile.postal_code].filter(Boolean).join(" ")].filter(Boolean).join("\n")}</p>
+                ) : <p className="text-xs text-warning">{t("deliveryMissing")}</p>}
+                <Link href="/dashboard/profile#address" className="text-xs font-semibold text-primary hover:underline">{t("deliveryEdit")}</Link>
+              </div>
+            </div>
             <EnrollForm classId={classId} userId={user.id} months={months} defaultMonth={firstOpen.value} />
           </CardContent>
         </Card>
