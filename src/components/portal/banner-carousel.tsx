@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 type Slide = { title: string; text: string; cta: string; href: string; theme: "orange" | "teal" | "dark" | "purple"; symbol?: string };
 const THEMES: Record<Slide["theme"], string> = {
-  orange: "from-[#f05b06] via-[#f97316] to-[#fbbf24] text-white",
-  teal: "from-[#14524f] via-[#1f807b] to-[#2bb3aa] text-white",
-  dark: "from-[#0b0b0b] via-[#1d1a17] to-[#3b1d0b] text-white",
-  purple: "from-[#3b0764] via-[#6d28d9] to-[#a855f7] text-white",
+  orange: "from-[#1963d4] via-[#1f7ae8] to-[#41c9f5] text-white",
+  teal: "from-[#0e5d82] via-[#068dc4] to-[#41c9f5] text-white",
+  dark: "from-[#0b1530] via-[#13224a] to-[#1963d4] text-white",
+  purple: "from-[#312e81] via-[#4f46e5] to-[#38bdf8] text-white",
 };
 
 export function BannerCarousel() {
@@ -25,11 +25,11 @@ export function BannerCarousel() {
   if (!slides.length) return null;
   const s = slides[i]!;
   return (
-    <div className="relative h-full min-h-[240px] overflow-hidden rounded-2xl shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+    <div className="relative h-full min-h-[240px] overflow-hidden rounded-3xl shadow-lift">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div key={i} initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={{ duration: 0.5, ease: "easeOut" }}
           className={cn("absolute inset-0 flex flex-col justify-center bg-gradient-to-br p-7 sm:p-9", THEMES[s.theme] ?? THEMES.orange)}>
-          <div className="bg-hex absolute inset-0 opacity-60" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,.25),transparent_45%)]" />
           <span className="absolute -right-4 -top-8 select-none font-display text-[13rem] font-black leading-none text-white/15">{s.symbol ?? "∫"}</span>
           <div className="relative max-w-md">
             <h2 className="font-display text-2xl font-extrabold leading-snug sm:text-3xl pb-1">{s.title}</h2>

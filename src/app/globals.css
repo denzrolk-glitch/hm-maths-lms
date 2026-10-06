@@ -99,8 +99,32 @@
   }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
-  /* Student portal: page titles sit on the dark band under the top bar */
-  .portal .ph h1 { color: #fff; }
-  .portal .ph > div > p { color: rgb(255 255 255 / 0.6); }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .glass { @apply border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60; }
+  .bg-mesh {
+    background-image:
+      radial-gradient(at 12% 8%, hsl(205 100% 88% / .75) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(190 95% 85% / .6) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(225 100% 92% / .55) 0, transparent 45%);
+  }
+  .dark .bg-mesh {
+    background-image:
+      radial-gradient(at 12% 8%, hsl(213 80% 30% / .35) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(195 90% 30% / .25) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(230 70% 30% / .25) 0, transparent 45%);
+  }
+  .bg-dots {
+    background-image: radial-gradient(hsl(var(--primary) / .18) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  .skeleton {
+    @apply rounded-xl bg-muted;
+    background-image: linear-gradient(90deg, transparent, hsl(var(--card) / .7), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
   .no-select { user-select: none; -webkit-user-select: none; }
 }
+
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
