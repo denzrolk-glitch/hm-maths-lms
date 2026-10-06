@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SplitReveal } from "./motion-kit";
 
 export function HexIcon({ className }: { className?: string }) {
   return (
@@ -25,7 +26,7 @@ export function SectionTitle({ label, title, subtitle, className, align = "cente
         <Sparkles className="h-3.5 w-3.5" /> {label}
       </p>
       <h2 className="mt-4 px-1 pb-2 font-display text-[2rem] font-extrabold leading-[1.2] tracking-tight text-ink dark:text-white sm:text-5xl">
-        <span className="text-gradient">{title}</span>
+        <SplitReveal text={title} wordClassName="bg-gradient-to-r from-teal-600 via-teal-500 to-brand-400 bg-clip-text text-transparent" />
       </h2>
       {subtitle ? <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">{subtitle}</p> : null}
     </motion.div>

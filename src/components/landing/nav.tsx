@@ -9,11 +9,11 @@ import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  ["story", "/#story"],
   ["features", "/#features"],
+  ["how", "/#how"],
+  ["story", "/#story"],
   ["classes", "/#classes"],
   ["testimonials", "/#testimonials"],
-  ["channels", "/#channels"],
   ["support", "/#support"],
 ] as const;
 

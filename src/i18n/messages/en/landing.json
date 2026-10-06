@@ -13,7 +13,8 @@
     "menu": "Open menu",
     "close": "Close menu",
     "features": "Features",
-    "register": "Register"
+    "register": "Register",
+    "how": "How it works"
   },
   "hero": {
     "kicker": "G.C.E. A/L Combined Mathematics",
@@ -30,7 +31,8 @@
     "stats": {
       "centers": "Class centers",
       "recordings": "Recordings",
-      "access": "Access anywhere"
+      "access": "Access anywhere",
+      "batches": "A/L batches"
     },
     "cards": {
       "rank": "#1 in Panadura",
@@ -39,6 +41,19 @@
       "liveSub": "Theory class · Zoom",
       "streak": "6-week streak",
       "streakSub": "All-island top 10"
+    },
+    "taglineLead": "Master",
+    "rotate": [
+      "Pure Maths",
+      "Applied Maths",
+      "Past papers",
+      "Combined Maths"
+    ],
+    "mock": {
+      "week": "Week 12",
+      "result": "Latest result",
+      "paper": "Differentiation paper",
+      "island": "island"
     }
   },
   "announcements": {
@@ -114,7 +129,8 @@
         "meta": "2024 A/L · Kalutara",
         "text": "Mechanics was my weakest area. Sir's short methods and revision classes made it my strongest by the final exam."
       }
-    ]
+    ],
+    "close": "Close video"
   },
   "classes": {
     "label": "Classes",
@@ -275,6 +291,59 @@
         "title": "Tutes delivered to your door",
         "text": "Add your address once when you register — monthly tutes and books are posted island-wide to the address on your profile."
       }
+    }
+  },
+  "marquee": {
+    "topics": [
+      "Differentiation",
+      "Integration",
+      "Vectors",
+      "Mechanics",
+      "Probability",
+      "Statics",
+      "Complex numbers",
+      "Trigonometry",
+      "Matrices",
+      "Circles"
+    ],
+    "perks": [
+      "Weekly papers",
+      "Center & all-island ranks",
+      "Live Zoom classes",
+      "HD recordings",
+      "Tutes delivered",
+      "Study streaks",
+      "Sinhala & English"
+    ]
+  },
+  "how": {
+    "label": "How it works",
+    "title": "From paper to podium",
+    "subtitle": "Every week, the same simple loop keeps you improving.",
+    "step": "Step {n}",
+    "steps": [
+      {
+        "title": "Sit the weekly paper",
+        "text": "Download the paper from your dashboard or sit it at your class center — every batch gets a fresh paper each week."
+      },
+      {
+        "title": "Get your marks online",
+        "text": "Marks are entered right after marking. See your score, grade and how far ahead of the class you are."
+      },
+      {
+        "title": "Climb the leaderboard",
+        "text": "Rank up in your center and all-island, keep your weekly streak alive and unlock badges along the way."
+      }
+    ],
+    "phone": {
+      "thisWeek": "This week",
+      "paper": "Week 12 paper",
+      "paperMeta": "Differentiation · 100 marks",
+      "marks": "92 / 100",
+      "grade": "Grade A",
+      "island": "All-island",
+      "board": "Leaderboard",
+      "you": "You"
     }
   }
 }
