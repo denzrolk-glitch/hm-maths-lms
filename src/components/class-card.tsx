@@ -12,7 +12,7 @@ export async function ClassCard({ cls, href, footer }: { cls: ClassRow; href?: s
   const [t, sched] = await Promise.all([getT("common"), getScheduleLabel()]);
   const timetable = sched(cls);
   const body = (
-    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)] transition-all hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lg">
       <div className="relative">
         <ClassBanner cls={cls} />
         <div className="absolute left-3 top-3 flex gap-1.5">

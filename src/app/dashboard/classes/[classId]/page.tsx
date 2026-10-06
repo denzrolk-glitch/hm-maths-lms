@@ -47,7 +47,7 @@ export default async function ClassroomPage({ params, searchParams }: {
 
   return (
     <div className="space-y-8">
-      <div className="overflow-hidden rounded-2xl bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+      <div className="overflow-hidden rounded-2xl bg-card shadow-soft">
         <ClassBanner cls={cls} className="aspect-[16/4] sm:aspect-[16/3]" />
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -93,7 +93,7 @@ export default async function ClassroomPage({ params, searchParams }: {
               </Card>
             ))}
           </div>
-        ) : <p className="rounded-2xl bg-white p-6 text-center text-sm text-muted-foreground shadow-[0_3px_4px_rgba(0,0,0,.03)]">{t("noLive", { month: f.month(month) })}</p>}
+        ) : <p className="rounded-2xl bg-card p-6 text-center text-sm text-muted-foreground shadow-soft">{t("noLive", { month: f.month(month) })}</p>}
       </section>
 
       <section id="recordings" className="scroll-mt-20">
@@ -107,7 +107,7 @@ export default async function ClassroomPage({ params, searchParams }: {
                   {recordings.filter((l) => l.week_number === wk).map((l) => {
                     const id = youtubeId(l.youtube_url);
                     return (
-                      <Link key={l.id} href={`/dashboard/classes/${classId}/lessons/${l.id}`} className="group overflow-hidden rounded-2xl bg-card shadow-[0_3px_4px_rgba(0,0,0,.03)] transition hover:-translate-y-0.5 hover:shadow-lg">
+                      <Link key={l.id} href={`/dashboard/classes/${classId}/lessons/${l.id}`} className="group overflow-hidden rounded-2xl bg-card shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg">
                         <div className="relative aspect-video bg-muted">
                           {id && <Image src={youtubeThumb(id)} alt="" fill sizes="400px" className="object-cover" />}
                           <div className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition group-hover:opacity-100"><PlayCircle className="h-12 w-12 text-white" /></div>
@@ -121,7 +121,7 @@ export default async function ClassroomPage({ params, searchParams }: {
               </div>
             ))}
           </div>
-        ) : <p className="rounded-2xl bg-white p-6 text-center text-sm text-muted-foreground shadow-[0_3px_4px_rgba(0,0,0,.03)]">{t("noRecordings")}</p>}
+        ) : <p className="rounded-2xl bg-card p-6 text-center text-sm text-muted-foreground shadow-soft">{t("noRecordings")}</p>}
       </section>
 
       <section id="materials" className="scroll-mt-20">
@@ -129,14 +129,14 @@ export default async function ClassroomPage({ params, searchParams }: {
         {materials.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {materials.map((l) => (
-              <div key={l.id} className="flex items-center gap-3 rounded-2xl bg-card p-4 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+              <div key={l.id} className="flex items-center gap-3 rounded-2xl bg-card p-4 shadow-soft">
                 <div className="rounded-lg bg-destructive/10 p-2.5 text-destructive"><FileText className="h-5 w-5" /></div>
                 <div className="min-w-0 flex-1"><p className="truncate font-medium">{l.title}</p><p className="text-xs text-muted-foreground">{t("week", { n: l.week_number })} · {t("pdfTute")}</p></div>
                 <a href={`/api/files/tute-pdfs?path=${encodeURIComponent(l.tute_pdf_url!)}&download=1`} className={buttonVariants({ size: "sm", variant: "outline" })}><Download /> {tc("actions.download")}</a>
               </div>
             ))}
           </div>
-        ) : <p className="rounded-2xl bg-white p-6 text-center text-sm text-muted-foreground shadow-[0_3px_4px_rgba(0,0,0,.03)]"><Lock className="mr-1 inline h-4 w-4" />{t("noMaterials")}</p>}
+        ) : <p className="rounded-2xl bg-card p-6 text-center text-sm text-muted-foreground shadow-soft"><Lock className="mr-1 inline h-4 w-4" />{t("noMaterials")}</p>}
       </section>
     </div>
   );

@@ -76,7 +76,7 @@ export function McqRunner({ examId, title, durationMinutes, totalQuestions }: { 
 
   if (phase === "intro" || phase === "loading") {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl bg-card p-6 text-center shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:p-10">
+      <div className="mx-auto max-w-xl rounded-2xl bg-card p-6 text-center shadow-soft sm:p-10">
         <Timer className="mx-auto h-10 w-10 text-primary" />
         <h1 className="mt-4 font-display text-2xl font-bold">{title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t("meta", { n: totalQuestions, min: durationMinutes })}</p>
@@ -107,7 +107,7 @@ export function McqRunner({ examId, title, durationMinutes, totalQuestions }: { 
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_240px]">
         {q ? (
-          <div className="rounded-2xl bg-card p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:p-6">
+          <div className="rounded-2xl bg-card p-5 shadow-soft sm:p-6">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("questionOf", { n: current + 1, total: qs.length })} · {Number(q.marks) === 1 ? t("mark") : t("marks", { n: q.marks })}</p>
             <p className="mt-3 whitespace-pre-line text-base font-medium leading-relaxed">{q.question_text}</p>
             <div className="mt-5 space-y-2">
@@ -130,10 +130,10 @@ export function McqRunner({ examId, title, durationMinutes, totalQuestions }: { 
                 </Button>}
             </div>
           </div>
-        ) : <p className="rounded-2xl bg-white p-6 text-sm text-muted-foreground">{t("noQuestions")}</p>}
+        ) : <p className="rounded-2xl bg-card p-6 text-sm text-muted-foreground">{t("noQuestions")}</p>}
 
         <aside className="space-y-4">
-          <div className="rounded-2xl bg-card p-4 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+          <div className="rounded-2xl bg-card p-4 shadow-soft">
             <p className="mb-3 text-sm font-semibold">{t("questions")}</p>
             <div className="grid grid-cols-5 gap-2">
               {qs.map((x, i) => (

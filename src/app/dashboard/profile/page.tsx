@@ -1,9 +1,9 @@
-import { CalendarDays, GraduationCap, IdCard, KeyRound, MapPin, School, ShieldCheck, UserRound } from "lucide-react";
+import { CalendarDays, GraduationCap, IdCard, KeyRound, MapPin, School, ShieldCheck, Truck, UserRound } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { StudentIdCard } from "@/components/student-id-card";
 import { CopyButton } from "@/components/copy-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/misc";
+import { Alert, PageHeader } from "@/components/ui/misc";
 import { getFormat, getT } from "@/i18n/server";
 import { cn, initials } from "@/lib/utils";
 import { PasswordForm, ProfileForm } from "./profile-forms";
@@ -23,13 +23,14 @@ export default async function ProfilePage() {
   const scored = (subs ?? []).filter((s) => s.score !== null && Number(s.total_marks) > 0);
   const avg = scored.length ? Math.round(scored.reduce((a, s) => a + (Number(s.score) / Number(s.total_marks)) * 100, 0) / scored.length) : null;
 
-  const fields = [profile.full_name, profile.mobile, profile.nic, profile.al_year, profile.school, profile.district];
+  const fields = [profile.full_name, profile.mobile, profile.nic, profile.al_year, profile.school, profile.district, profile.address, profile.city];
   const pct = Math.round((fields.filter((v) => v !== null && v !== "").length / fields.length) * 100);
 
   const chips = [
     profile.al_year ? { icon: GraduationCap, text: tc("alBatch", { year: profile.al_year }) } : null,
     { icon: MapPin, text: tc(`towns.${profile.town}`) },
     profile.school ? { icon: School, text: profile.school } : null,
+    profile.city ? { icon: Truck, text: profile.city } : null,
     { icon: CalendarDays, text: t("joined", { date: f.date(profile.created_at) }) },
   ].filter(Boolean) as { icon: typeof MapPin; text: string }[];
 
@@ -41,15 +42,16 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title={t("title")} description={t("subtitle")} />
+      <PageHeader title={t("title")} description={t("subtitle")} icon={UserRound} />
+      {!profile.address && <Alert variant="info"><a href="#address" className="font-semibold underline-offset-2 hover:underline">{t("addAddress")}</a></Alert>}
 
       {/* ── Hero ── */}
       <Card className="overflow-hidden">
-        <div className="relative h-28 bg-gradient-to-br from-[#17191e] via-[#1d2026] to-[#0f3d3a] sm:h-32">
-          <div className="bg-hex absolute inset-0 opacity-70" />
-          <div className="absolute -right-10 -top-16 h-56 w-56 rounded-full bg-teal-500/25 blur-3xl" />
+        <div className="relative h-28 bg-gradient-to-br from-teal-700 via-teal-500 to-brand-400 sm:h-32">
+          <div className="bg-dots absolute inset-0 opacity-30" />
+          <div className="absolute -right-10 -top-16 h-56 w-56 rounded-full bg-white/20 blur-3xl" />
           <div className="absolute -left-10 bottom-0 h-32 w-48 rounded-full bg-brand-500/15 blur-3xl" />
-          <span className="absolute -bottom-8 right-6 select-none font-display text-[8rem] font-black leading-none text-white/5">∑</span>
+          <span className="absolute -bottom-8 right-6 select-none font-display text-[8rem] font-black leading-none text-white/15">∑</span>
         </div>
         <div className="relative px-5 pb-5 sm:px-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

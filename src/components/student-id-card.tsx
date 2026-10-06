@@ -6,7 +6,7 @@ import { initials } from "@/lib/utils";
 export async function StudentIdCard({ profile }: { profile: Profile }) {
   const t = await getT("common");
   return (
-    <div className="relative mx-auto aspect-[1.586] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-[#17191e] via-[#1d2026] to-[#0f3d3a] p-5 text-white shadow-2xl shadow-black/20">
+    <div className="relative mx-auto aspect-[1.586] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-teal-700 via-teal-600 to-brand-500 p-5 text-white shadow-2xl shadow-black/20">
       <div className="bg-hex absolute inset-0 opacity-60" />
       <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-500/20 blur-3xl" />
       <span className="absolute -bottom-10 -right-4 select-none font-display text-[10rem] font-black leading-none text-white/5">∑</span>

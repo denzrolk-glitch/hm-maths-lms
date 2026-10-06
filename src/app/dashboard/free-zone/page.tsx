@@ -31,7 +31,7 @@ export default async function FreeZonePage() {
           {(classes as ClassRow[]).map((c) => {
             const ls = ((lessons ?? []) as Lesson[]).filter((l) => l.class_id === c.id);
             return (
-              <section key={c.id} className="rounded-2xl border border-border dark:border-white/10 bg-card p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+              <section key={c.id} className="rounded-2xl border border-border dark:border-white/10 bg-card p-5 shadow-soft">
                 <div className="mb-4 flex items-center gap-2">
                   <h2 className="font-display text-lg font-semibold">{c.title}</h2><Badge>{tc(`classTypes.${c.class_type}`)}</Badge>
                 </div>

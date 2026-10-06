@@ -16,7 +16,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<{ ex
     supabase.rpc("get_leaderboard", { p_exam: examId }),
     supabase.from("exams").select("title").eq("id", examId).maybeSingle(),
   ]);
-  const back = <Link href="/dashboard/exams" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
+  const back = <Link href="/dashboard/exams" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary"><ArrowLeft className="h-4 w-4" />{t("back")}</Link>;
   if (error) return <div className="space-y-4">{back}<Alert variant="error" className="bg-white">{dbError(tr, error.message)}</Alert></div>;
   const rows = (data ?? []) as Row[];
   const me = rows.find((r) => r.is_me);
@@ -26,8 +26,8 @@ export default async function LeaderboardPage({ params }: { params: Promise<{ ex
     <div className="space-y-6">
       {back}
       <div className="ph flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div><h1 className="font-display text-2xl font-bold">{t("title")}</h1><p className="text-sm text-white/60">{t("subtitle", { title: exam?.title ?? "", n: rows.length })}</p></div>
-        {me && <div className="rounded-2xl bg-white px-5 py-3 text-center"><p className="text-xs text-muted-foreground">{t("yourRank")}</p><p className="font-display text-3xl font-bold text-primary">#{me.rank}</p></div>}
+        <div><h1 className="font-display text-2xl font-bold">{t("title")}</h1><p className="text-sm text-muted-foreground">{t("subtitle", { title: exam?.title ?? "", n: rows.length })}</p></div>
+        {me && <div className="rounded-2xl bg-card px-5 py-3 text-center"><p className="text-xs text-muted-foreground">{t("yourRank")}</p><p className="font-display text-3xl font-bold text-primary">#{me.rank}</p></div>}
       </div>
       {!rows.length ? <EmptyState icon={Trophy} title={t("empty")} /> : (
         <Table>

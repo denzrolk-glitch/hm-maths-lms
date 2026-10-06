@@ -31,7 +31,7 @@ export function Story() {
   const { d, height } = snake(items.length);
 
   return (
-    <section id="story" className="relative scroll-mt-24 overflow-hidden bg-[#050505] py-24">
+    <section id="story" className="relative scroll-mt-24 overflow-hidden py-24">
       <SectionTitle label={t("label")} title={t("title")} />
       <div ref={ref} className="container relative mt-16">
         <svg viewBox={`0 0 1000 ${height}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
@@ -40,9 +40,10 @@ export function Story() {
               <feGaussianBlur stdDeviation="6" result="b" />
               <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
+            <linearGradient id="storyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#41c9f5" /></linearGradient>
           </defs>
-          <path d={d} fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-          <motion.path d={d} fill="none" stroke="#f05b06" strokeWidth="2.5" vectorEffect="non-scaling-stroke" filter="url(#glow)"
+          <path d={d} fill="none" stroke="rgba(31,122,232,.15)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+          <motion.path d={d} fill="none" stroke="url(#storyGrad)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" filter="url(#glow)"
             style={{ pathLength: progress }} strokeLinecap="round" />
         </svg>
         <div className="relative">
@@ -54,15 +55,15 @@ export function Story() {
                 <motion.div
                   initial={{ opacity: 0, x: left ? -50 : 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-120px" }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="flex max-w-md items-start gap-4 rounded-2xl bg-[#050505]/80 p-2 backdrop-blur-[2px] sm:gap-5"
+                  className="flex max-w-md items-start gap-4 glass rounded-3xl p-4 shadow-lift sm:gap-5"
                 >
-                  <div className="grid h-20 w-20 shrink-0 place-items-center rounded-xl border border-brand-500/70 bg-gradient-to-br from-[#2a170b] to-[#120b06] text-brand-500 shadow-[0_0_30px_rgba(240,91,6,.25)] sm:h-24 sm:w-24">
+                  <div className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-teal-500 to-brand-500 text-white shadow-lg shadow-teal-500/30 sm:h-24 sm:w-24">
                     <Icon className="h-9 w-9 sm:h-10 sm:w-10" />
                   </div>
                   <div className="pt-1">
-                    <p className="font-mono text-xs text-brand-500/80">0{i + 1}</p>
-                    <h3 className="mt-1 font-display text-lg font-bold text-white sm:text-xl">{m.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-white/55">{m.text}</p>
+                    <p className="font-mono text-xs text-teal-600 dark:text-teal-300">0{i + 1}</p>
+                    <h3 className="mt-1 font-display text-lg font-bold text-ink dark:text-white sm:text-xl">{m.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{m.text}</p>
                   </div>
                 </motion.div>
               </div>

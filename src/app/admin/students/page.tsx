@@ -45,7 +45,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
                 <td><p className="font-medium">{p.full_name} {p.role === "admin" && <Badge>{tc("shell.admin")}</Badge>}</p><p className="font-mono text-xs text-muted-foreground">{p.student_id ?? tc("dash")}</p></td>
                 <td className="text-xs"><p>{p.mobile ?? tc("dash")}</p><p className="text-muted-foreground">{t("nic")} {p.nic ?? tc("dash")}</p></td>
                 <td className="text-xs">{p.al_year ?? tc("dash")} · {tc(`towns.${p.town}`)}</td>
-                <td className="text-xs">{p.school ?? tc("dash")}{p.district ? `, ${p.district}` : ""}</td>
+                <td className="max-w-56 text-xs"><p>{p.school ?? tc("dash")}{p.district ? `, ${p.district}` : ""}</p>{p.address ? <p className="mt-0.5 line-clamp-2 text-muted-foreground" title={p.address}>{[p.address, p.city, p.postal_code].filter(Boolean).join(", ")}</p> : null}</td>
                 <td>{p.enrollments?.[0]?.count ?? 0}</td>
                 <td className="text-xs text-muted-foreground">{f.date(p.created_at)}</td>
                 <td>

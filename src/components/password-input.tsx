@@ -28,7 +28,7 @@ export function PasswordInput({ meter, onValue, className, ...props }: React.Inp
         <Input {...props} type={show ? "text" : "password"} className={cn("pr-11", className)}
           onChange={(e) => { setValue(e.target.value); onValue?.(e.target.value); props.onChange?.(e); }} />
         <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? t("password.hide") : t("password.show")}
-          className="absolute right-1 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-md text-slate-400 hover:text-slate-700">
+          className="absolute right-1 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-md text-muted-foreground hover:text-foreground">
           {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
@@ -36,10 +36,10 @@ export function PasswordInput({ meter, onValue, className, ...props }: React.Inp
         <div>
           <div className="grid grid-cols-4 gap-1.5" aria-hidden>
             {[0, 1, 2, 3].map((i) => (
-              <span key={i} className={cn("h-1.5 rounded-full transition-colors", value && i < score ? colors[score - 1] : "bg-slate-200")} />
+              <span key={i} className={cn("h-1.5 rounded-full transition-colors", value && i < score ? colors[score - 1] : "bg-muted")} />
             ))}
           </div>
-          <p className="mt-1.5 text-xs text-slate-500">{value ? <b className="font-semibold text-slate-700">{labels[score - 1]} · </b> : null}{t("register.strengthHint")}</p>
+          <p className="mt-1.5 text-xs text-muted-foreground">{value ? <b className="font-semibold text-foreground">{labels[score - 1]} · </b> : null}{t("register.strengthHint")}</p>
         </div>
       ) : null}
     </div>

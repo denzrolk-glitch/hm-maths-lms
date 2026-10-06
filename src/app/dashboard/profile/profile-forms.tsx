@@ -1,7 +1,7 @@
 "use client";
 import { Lock } from "lucide-react";
 import { ActionForm } from "@/components/action-form";
-import { Field, Input, Select } from "@/components/ui/input";
+import { Field, Input, Select, Textarea } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { PasswordInput } from "@/components/password-input";
 import { changePasswordAction, updateProfileAction } from "@/app/dashboard/actions";
@@ -58,6 +58,20 @@ export function ProfileForm({ profile }: { profile: Profile }) {
             ))}
           </div>
         </Field>
+      </section>
+
+      <section id="address" className="scroll-mt-24 space-y-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("deliveryTitle")}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{t("deliveryHint")}</p>
+        </div>
+        <Field label={t("address")} htmlFor="address">
+          <Textarea id="address" name="address" rows={2} defaultValue={profile.address ?? ""} required minLength={8} maxLength={300} autoComplete="street-address" />
+        </Field>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_160px]">
+          <Field label={t("city")} htmlFor="city"><Input id="city" name="city" defaultValue={profile.city ?? ""} required minLength={2} maxLength={80} autoComplete="address-level2" /></Field>
+          <Field label={t("postal")} htmlFor="postal_code"><Input id="postal_code" name="postal_code" defaultValue={profile.postal_code ?? ""} inputMode="numeric" pattern="\d{5}" maxLength={5} autoComplete="postal-code" /></Field>
+        </div>
       </section>
 
       <div className="flex justify-end border-t pt-4">

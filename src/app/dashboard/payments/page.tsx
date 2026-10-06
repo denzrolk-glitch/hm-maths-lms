@@ -58,7 +58,7 @@ export default async function PaymentsPage() {
     { label: t("needsAction"), value: String(rejected.length), hint: t("needsActionHint"), icon: AlertTriangle, tone: rejected.length ? "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400" : "bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-slate-400" },
   ];
   const steps = t.raw<string[]>("steps") ?? [];
-  const headerBtn = "border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white";
+  const headerBtn = "";
 
   return (
     <div className="space-y-5">
@@ -69,7 +69,7 @@ export default async function PaymentsPage() {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         {stats.map(({ label, value, hint, icon: Icon, tone }) => (
-          <div key={label} className="rounded-2xl border bg-card p-4 shadow-[0_3px_4px_rgba(0,0,0,.03)] sm:p-5">
+          <div key={label} className="rounded-2xl border bg-card p-4 shadow-soft sm:p-5">
             <div className="flex items-start justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground sm:text-sm">{label}</p>
               <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl", tone)}><Icon className="h-4 w-4" /></span>
@@ -102,7 +102,7 @@ export default async function PaymentsPage() {
 
         <div className="space-y-5 lg:sticky lg:top-24 lg:h-fit">
           {profile.student_id && (
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#17191e] via-[#1d2026] to-[#0f3d3a] p-5 text-white shadow-xl shadow-black/10">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-700 via-teal-600 to-brand-500 p-5 text-white shadow-xl shadow-black/10">
               <div className="bg-hex absolute inset-0 opacity-60" />
               <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-teal-500/25 blur-3xl" />
               <div className="relative">

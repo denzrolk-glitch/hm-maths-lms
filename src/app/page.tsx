@@ -2,6 +2,7 @@ import { LandingNav } from "@/components/landing/nav";
 import { Hero } from "@/components/landing/hero";
 import { Announcements } from "@/components/landing/announcements";
 import { Story } from "@/components/landing/story";
+import { Features } from "@/components/landing/features";
 import { Testimonials } from "@/components/landing/testimonials";
 import { ClassesCarousel, type CarouselClass } from "@/components/landing/classes-carousel";
 import { Channels } from "@/components/landing/channels";
@@ -38,12 +39,13 @@ export default async function HomePage() {
 
   const account = !user ? "guest" : profile?.role === "admin" ? "admin" : "student";
   return (
-    <div className="bg-[#050505] text-white">
+    <div className="relative bg-gradient-to-b from-[#f3f9ff] via-white to-[#eef7ff] text-ink dark:from-[#060b1a] dark:via-[#070d1f] dark:to-[#060b1a] dark:text-white">
       <LandingNav account={account} />
       <main>
         <Hero heroImage={publicImage(SITE.heroImage)} />
         <Announcements />
         <Story />
+        <Features />
         <Testimonials videoId={SITE.testimonialVideoId} />
         <ClassesCarousel classes={classes} />
         <Channels />

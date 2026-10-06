@@ -12,6 +12,9 @@ export interface Profile {
   town: Town;
   school: string | null;
   district: string | null;
+  address?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
   student_id: string | null;
   role: Role;
   created_at: string;

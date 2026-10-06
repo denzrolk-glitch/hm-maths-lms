@@ -34,7 +34,7 @@ export default async function ExamsPage() {
             const done = s && s.status !== "in_progress";
             const closed = e.closes_at && new Date(e.closes_at) < new Date();
             return (
-              <div key={e.id} className="flex flex-col rounded-2xl bg-card p-5 shadow-[0_3px_4px_rgba(0,0,0,.03)]">
+              <div key={e.id} className="flex flex-col rounded-2xl bg-card p-5 shadow-soft">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex flex-wrap gap-1.5">
