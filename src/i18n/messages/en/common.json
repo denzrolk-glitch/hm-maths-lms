@@ -91,7 +91,9 @@
     "account": "Account",
     "helpDesk": "Help Desk",
     "privacy": "Privacy Policy",
-    "backToSite": "Back to website"
+    "backToSite": "Back to website",
+    "adminConsole": "Admin console",
+    "more": "More"
   },
   "file": {
     "choose": "Choose file",
@@ -202,5 +204,11 @@
       "teams": "Microsoft Teams",
       "other": "Live link"
     }
+  },
+  "paperTypes": {
+    "weekly": "Weekly paper",
+    "monthly": "Monthly paper",
+    "model": "Model paper",
+    "term": "Term test"
   }
 }

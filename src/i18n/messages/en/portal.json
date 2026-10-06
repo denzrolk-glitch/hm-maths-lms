@@ -8,7 +8,9 @@
     "store": "Store",
     "notices": "Notices",
     "profile": "Profile",
-    "admin": "Admin Panel"
+    "admin": "Admin Panel",
+    "papers": "Papers & Results",
+    "leaderboard": "Leaderboard"
   },
   "crumbs": {
     "dashboard": "Dashboard",
@@ -21,7 +23,8 @@
     "notices": "Notices",
     "profile": "Profile",
     "payments": "Payments",
-    "details": "Details"
+    "details": "Details",
+    "papers": "Papers & Results"
   },
   "dashboard": {
     "welcome": "Welcome Back, {name}",
@@ -30,7 +33,14 @@
       "classes": "My Classes",
       "exams": "Papers & Exams",
       "payments": "Payments",
-      "store": "Class Store"
+      "store": "Class Store",
+      "papers": "Papers & Results",
+      "leaderboard": "Leaderboard",
+      "classesHint": "{n} active this month",
+      "papersHint": "{n} papers sat",
+      "leaderboardHint": "#{rank} all-island",
+      "leaderboardNone": "See the top students",
+      "storeHint": "Classes, tutes & books"
     },
     "slide": "Show slide {n}",
     "banners": [
@@ -91,7 +101,24 @@
       "tutorials": "Tutorials",
       "contact": "Contact Us",
       "waText": "Hello, I need help with HM Maths. My Student ID: {id}"
-    }
+    },
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "heroText": "Keep your streak going — sit this week's paper and check where you rank.",
+    "nextClass": "Next live class",
+    "joinNow": "Join now",
+    "browseClasses": "Browse classes",
+    "latestResult": "Latest paper result",
+    "noLatest": "Sit a weekly paper to see your result and rank here.",
+    "gradeLabel": "Grade {g}",
+    "islandRank": "#{rank} of {n} all-island",
+    "myResults": "My results",
+    "ranksTitle": "My ranks",
+    "rankIsland": "All-island",
+    "rankTown": "My center"
   },
   "store": {
     "classesTitle": "Monthly class admissions",
@@ -307,7 +334,13 @@
       "Add numbers or symbols",
       "Never share it with anyone"
     ],
-    "idTip": "Use your Student ID as the bank reference when you pay."
+    "idTip": "Use your Student ID as the bank reference when you pay.",
+    "deliveryTitle": "Delivery address",
+    "deliveryHint": "Tutes and store orders are posted to this address.",
+    "address": "Home address",
+    "city": "City / town",
+    "postal": "Postal code",
+    "addAddress": "Add your delivery address so we can post your tutes →"
   },
   "payments": {
     "title": "Payments History",
@@ -380,7 +413,10 @@
     "reference": "Reference / transaction no. (optional)",
     "referencePlaceholder": "e.g. 123456789",
     "submitting": "Submitting…",
-    "submit": "Submit for approval"
+    "submit": "Submit for approval",
+    "deliveryTitle": "Tutes will be posted to",
+    "deliveryMissing": "No delivery address on your profile yet.",
+    "deliveryEdit": "Update address"
   },
   "order": {
     "amount": "{price} × quantity (+ courier if applicable)",
@@ -391,6 +427,148 @@
     "slip": "Bank slip",
     "uploadSlip": "Upload bank slip",
     "placing": "Placing order…",
-    "place": "Place order"
+    "place": "Place order",
+    "addressFromProfile": "Filled from your profile — edit if this order should go elsewhere."
+  },
+  "navGroups": {
+    "learn": "Learn",
+    "compete": "Compete",
+    "account": "Account"
+  },
+  "streak": {
+    "days": "{n}-day streak",
+    "label": "Study streak · keep it going!",
+    "paperTitle": "Weekly paper streak",
+    "studyTitle": "Daily study streak",
+    "weeks": "weeks",
+    "daysUnit": "days",
+    "best": "Best {n}",
+    "keepGoing": "Don't break it this week!",
+    "start": "Sit this week's paper to start"
+  },
+  "badges": {
+    "progress": "{n} of {total} unlocked",
+    "firstPaper": {
+      "name": "First paper",
+      "hint": "Sit your first paper"
+    },
+    "streak3": {
+      "name": "On fire",
+      "hint": "3-week paper streak"
+    },
+    "streak5": {
+      "name": "Unstoppable",
+      "hint": "5-week paper streak"
+    },
+    "streak10": {
+      "name": "Legend",
+      "hint": "10-week paper streak"
+    },
+    "score90": {
+      "name": "90 club",
+      "hint": "Score 90% or more"
+    },
+    "fullMarks": {
+      "name": "Perfect",
+      "hint": "Get full marks on a paper"
+    },
+    "top10": {
+      "name": "Top 10",
+      "hint": "Top 10 all-island in your latest paper"
+    },
+    "townChampion": {
+      "name": "Center champion",
+      "hint": "#1 in your center in your latest paper"
+    },
+    "champion": {
+      "name": "Island champion",
+      "hint": "#1 all-island in your latest paper"
+    },
+    "papers10": {
+      "name": "Dedicated",
+      "hint": "Sit 10 papers"
+    },
+    "study7": {
+      "name": "Daily learner",
+      "hint": "7-day study streak"
+    }
+  },
+  "ranks": {
+    "of": "of {n} students",
+    "title": "Leaderboard",
+    "eyebrow": "Compete",
+    "subtitle": "Points = sum of your paper percentages. Sit every paper to climb!",
+    "islandRank": "All-island rank",
+    "townRank": "{town} rank",
+    "myPoints": "My points",
+    "pointsHint": "For the selected filters",
+    "streak": "Paper streak",
+    "weeksN": "{n} weeks",
+    "bestN": "Best: {n} weeks",
+    "filters": {
+      "scope": "Center",
+      "period": "Period",
+      "batch": "Batch"
+    },
+    "island": "All island",
+    "allBatches": "All batches",
+    "periods": {
+      "week": "This week",
+      "month": "This month",
+      "year": "This year",
+      "all": "All time"
+    },
+    "types": {
+      "all": "All papers",
+      "weekly": "Weekly only"
+    },
+    "papersAvg": "{n} papers · avg {avg}%",
+    "pts": "points",
+    "empty": "No marks for this selection yet.",
+    "you": "You",
+    "howPoints": "Each paper adds its percentage to your points (e.g. 78% = 78 points). Ties share the same rank."
+  },
+  "papers": {
+    "title": "Papers & Results",
+    "eyebrow": "Compete",
+    "subtitle": "Your weekly paper marks, ranks, streaks and achievements.",
+    "openLeaderboard": "Leaderboard",
+    "latest": "Latest result",
+    "noLatest": "No results yet",
+    "noLatestText": "Your marks appear here as soon as they're entered after each paper.",
+    "marksOf": "{marks} / {total}",
+    "islandRank": "All-island rank",
+    "townRank": "{town} rank",
+    "grade": "Grade",
+    "stats": {
+      "sat": "Papers sat",
+      "average": "Average",
+      "best": "Best score",
+      "points": "Points",
+      "pointsHint": "Sum of your percentages"
+    },
+    "progress": "My progress",
+    "progressHint": "Your last 10 papers (%)",
+    "noProgress": "No papers yet",
+    "paperN": "P{n}",
+    "achievements": "Achievements",
+    "all": "All papers",
+    "outOf": "Out of {total}",
+    "paperFile": "Download paper",
+    "answersFile": "Answers",
+    "notSat": "Not sat",
+    "viewResult": "View result",
+    "emptyTitle": "No papers yet",
+    "emptyText": "Papers for your batch will appear here once they're published.",
+    "back": "All papers",
+    "ahead": "You beat",
+    "classAvg": "Average score",
+    "noMarkYet": "Your marks for this paper haven't been entered yet.",
+    "board": "Leaderboard",
+    "boardEmpty": "No marks entered yet.",
+    "you": "You",
+    "scope": {
+      "island": "All island"
+    }
   }
 }
