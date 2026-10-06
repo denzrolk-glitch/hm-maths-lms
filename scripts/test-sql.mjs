@@ -29,10 +29,13 @@ await db.exec(`insert into public.classes (id, title) values ('00000000-0000-000
   insert into public.lessons (id, class_id, month, title, live_url) values ('00000000-0000-0000-0000-0000000000d0','00000000-0000-0000-0000-0000000000c0','2026-01','tmp','https://zoom.us/j/1');`);
 await db.exec(sql2);
 await db.exec(sql2);
+const sql3 = readFileSync(new URL("../supabase/migrations/0003_papers_leaderboards.sql", import.meta.url), "utf8");
+await db.exec(sql3);
+await db.exec(sql3);
 assert.equal((await db.query(`select live_url from public.lesson_live_links where lesson_id='00000000-0000-0000-0000-0000000000d0'`)).rows[0].live_url, "https://zoom.us/j/1");
 assert.equal((await db.query(`select 1 from information_schema.columns where table_name='lessons' and column_name='live_url'`)).rows.length, 0);
 await db.exec(`delete from public.classes where id='00000000-0000-0000-0000-0000000000c0'`);
-console.log("✓ migrations 0001 + 0002 applied twice (idempotent), live links moved");
+console.log("✓ migrations 0001 + 0002 + 0003 applied twice (idempotent), live links moved");
 
 const ADMIN = "00000000-0000-0000-0000-00000000000a";
 const S1 = "00000000-0000-0000-0000-000000000001";
@@ -51,7 +54,7 @@ async function fails(promise, label) {
 
 // ---- signup trigger
 await q(`insert into auth.users values ($1,'admin@nativelaunch.xyz','{"full_name":"Hasitha Madusanka"}')`, [ADMIN]);
-await q(`insert into auth.users values ($1,'0771234567@students.hmmaths.lk',$2)`, [S1, JSON.stringify({ full_name: "Kasun Perera", mobile: "0771234567", nic: "200512345678", al_year: "2027", town: "Panadura", school: "Royal College", district: "Kalutara" })]);
+await q(`insert into auth.users values ($1,'0771234567@students.hmmaths.lk',$2)`, [S1, JSON.stringify({ full_name: "Kasun Perera", mobile: "0771234567", nic: "200512345678", al_year: "2027", town: "Panadura", school: "Royal College", district: "Kalutara", address: "12 Galle Rd", city: "Panadura", postal_code: "12500" })]);
 await q(`insert into auth.users values ($1,'0711111111@students.hmmaths.lk',$2)`, [S2, JSON.stringify({ full_name: "Nimali Silva", mobile: "0711111111", nic: "200698765432v", al_year: "2026", town: "Horana" })]);
 const profs = await q(`select id, role, student_id, nic from public.profiles order by id`);
 assert.equal(profs.find(p => p.id === ADMIN).role, "admin");
@@ -202,6 +205,71 @@ try { await as(S1, () => q(`update public.lesson_live_links set live_url='https:
 assert.equal((await q(`select live_url from public.lesson_live_links where lesson_id=$1`, [soon]))[0].live_url, "https://zoom.us/j/999");
 assert.ok(cancelled);
 console.log("✓ live link readable only inside the join window, by paid students, not when cancelled");
+
+// ---- 0003: address, papers, marks, leaderboards, streaks
+const [addr] = await q(`select address, city, postal_code from public.profiles where id=$1`, [S1]);
+assert.deepEqual(addr, { address: "12 Galle Rd", city: "Panadura", postal_code: "12500" });
+await as(S1, () => q(`update public.profiles set address='45 New Rd' where id=$1`, [S1]));
+assert.equal((await q(`select address from public.profiles where id=$1`, [S1]))[0].address, "45 New Rd");
+console.log("✓ address saved at sign-up and editable by the student");
+
+const S3 = "00000000-0000-0000-0000-000000000003";
+await q(`insert into auth.users values ($1,'0722222222@students.hmmaths.lk',$2)`, [S3, JSON.stringify({ full_name: "Amaya Dias", mobile: "0722222222", nic: "200712345678", al_year: "2027", town: "Panadura" })]);
+await fails(as(S1, () => q(`insert into public.papers (title) values ('hack')`)), "student creating a paper");
+const mkPaper = async (title, date, draft = false) => (await as(ADMIN, () => q(`insert into public.papers (title, paper_date, total_marks, al_year, is_published) values ($1,$2,50,2027,$3) returning id`, [title, date, !draft])))[0].id;
+const p1 = await mkPaper("Week 1", "2026-10-04"), p2 = await mkPaper("Week 2", "2026-10-11"), p3 = await mkPaper("Week 3", "2026-10-18"), hidden = await mkPaper("Draft", "2026-10-25", true);
+const mark = (p, s, m) => as(ADMIN, () => q(`insert into public.paper_marks (paper_id, student_id, marks) values ($1,$2,$3) on conflict (paper_id, student_id) do update set marks=excluded.marks`, [p, s, m]));
+await fails(mark(p1, S1, 51), "marks above the paper total");
+await fails(as(S1, () => q(`insert into public.paper_marks (paper_id, student_id, marks) values ($1,$2,50)`, [p1, S1])), "student entering own marks");
+await mark(p1, S1, 40); await mark(p1, S2, 45); await mark(p1, S3, 30);
+await mark(p2, S1, 48); await mark(p2, S3, 49);
+await mark(p3, S1, 35); await mark(p3, S3, 20);
+await mark(hidden, S1, 50);
+assert.equal((await as(S1, () => q(`select * from public.paper_marks`))).length, 3);
+assert.equal((await as(S1, () => q(`select * from public.papers`))).length, 3);
+console.log("✓ admin enters marks; students read only their own published marks");
+
+const lbIsland = await as(S1, () => q(`select * from public.get_paper_leaderboard($1)`, [p1]));
+assert.deepEqual(lbIsland.map((r) => [Number(r.rank), r.full_name]), [[1, "Nimali Silva"], [2, "Kasun P."], [3, "Amaya Dias"]]);
+assert.equal(lbIsland[1].is_me, true); assert.equal(Number(lbIsland[1].pct), 80);
+const lbTown = await as(S1, () => q(`select * from public.get_paper_leaderboard($1,'Panadura')`, [p1]));
+assert.deepEqual(lbTown.map((r) => Number(r.rank)), [1, 2]); assert.equal(Number(lbTown[0].entrants), 2);
+const lbTop1 = await as(S3, () => q(`select * from public.get_paper_leaderboard($1,null,1)`, [p1]));
+assert.deepEqual(lbTop1.map((r) => r.is_me), [false, true]);
+assert.equal((await as(S1, () => q(`select * from public.get_paper_leaderboard($1)`, [hidden]))).length, 0);
+await fails(as(null, () => q(`select * from public.get_paper_leaderboard($1)`, [p1])), "anon reading leaderboards");
+console.log("✓ paper leaderboard: all-island, by center (Panadura), own row always included, drafts hidden");
+
+const season = await as(S1, () => q(`select * from public.get_overall_leaderboard(null, 2027)`));
+assert.deepEqual(season.map((r) => r.full_name), ["Kasun P.", "Amaya Dias"]);
+assert.equal(Number(season[0].points), 80 + 96 + 70); assert.equal(Number(season[0].papers), 3);
+const oct = await as(S1, () => q(`select * from public.get_overall_leaderboard(null, null, 'weekly', '2026-10-01', '2026-10-05')`));
+assert.equal(oct[0].full_name, "Nimali Silva");
+console.log("✓ season leaderboard: points, batch + date filters");
+
+const [{ get_my_paper_stats: st1 }] = await as(S1, () => q(`select public.get_my_paper_stats()`));
+assert.equal(st1.papers, 3); assert.equal(st1.streak, 3); assert.equal(st1.best_streak, 3);
+assert.equal(st1.last.title, "Week 3"); assert.equal(st1.last.rank_island, 1); assert.equal(st1.last.rank_town, 1);
+const [{ get_my_paper_stats: st2 }] = await as(S2, () => q(`select public.get_my_paper_stats()`));
+assert.equal(st2.papers, 1); assert.equal(st2.streak, 1);
+await mark(p3, S3, 0); await as(ADMIN, () => q(`delete from public.paper_marks where paper_id=$1 and student_id=$2`, [p2, S3]));
+const [{ get_my_paper_stats: st3 }] = await as(S3, () => q(`select public.get_my_paper_stats()`));
+assert.equal(st3.streak, 1); assert.equal(st3.best_streak, 1);
+await fails(as(S1, () => q(`select public.get_my_paper_stats($1)`, [S3])), "reading someone else's stats");
+console.log("✓ weekly-paper streaks (missed paper resets the streak)");
+
+const [{ log_activity: a1 }] = await as(S1, () => q(`select public.log_activity()`));
+assert.equal(a1.current, 1); assert.equal(a1.week.length, 7); assert.equal(a1.week[6], true);
+await q(`insert into public.student_activity values ($1, (now() at time zone 'Asia/Colombo')::date - 1), ($1, (now() at time zone 'Asia/Colombo')::date - 2), ($1, (now() at time zone 'Asia/Colombo')::date - 5)`, [S1]);
+const [{ log_activity: a2 }] = await as(S1, () => q(`select public.log_activity()`));
+assert.equal(a2.current, 3); assert.equal(a2.best, 3);
+await fails(as(S1, () => q(`insert into public.student_activity values ($1, '2020-01-01')`, [S1])), "faking activity days");
+console.log("✓ daily study streak");
+
+await as(ADMIN, () => q(`insert into storage.objects (bucket_id,name) values ('papers',$1),('papers',$2)`, [`${p1}/week1.pdf`, `${hidden}/draft.pdf`]));
+await fails(as(S1, () => q(`insert into storage.objects (bucket_id,name) values ('papers',$1)`, [`${p1}/x.pdf`])), "student uploading papers");
+assert.deepEqual((await as(S1, () => q(`select name from storage.objects where bucket_id='papers'`))).map((r) => r.name), [`${p1}/week1.pdf`]);
+console.log("✓ paper files: admin upload, students download published papers only");
 
 console.log("\nALL SQL TESTS PASSED");
 process.exit(0);
