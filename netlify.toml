@@ -6,6 +6,10 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # NEXT_PUBLIC_* values are public by design (they are shipped to the browser and
+  # protected by Supabase RLS), so the secrets scanner must not fail on them.
+  # SUPABASE_SERVICE_ROLE_KEY is still scanned and must never appear in output.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_SITE_URL"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
