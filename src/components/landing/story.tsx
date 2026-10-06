@@ -1,76 +1,80 @@
 "use client";
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { FileCheck2, MapPinned, Sparkles, Trophy, Video, type LucideIcon } from "lucide-react";
 import { useT } from "@/i18n/client";
 import { SectionTitle } from "./section-title";
-import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = { spark: Sparkles, map: MapPinned, video: Video, paper: FileCheck2, trophy: Trophy };
+const TONES = ["from-teal-500 to-brand-500", "from-sky-400 to-indigo-500", "from-violet-500 to-fuchsia-500", "from-amber-400 to-orange-500", "from-emerald-400 to-teal-600"];
 type Milestone = { icon: string; title: string; text: string };
 
-/** Snake path through n rows in a 1000 × (n*300) box. */
-function snake(n: number) {
-  const h = 300;
-  let d = "M 620 0";
-  for (let i = 0; i < n; i++) {
-    const y = i * h;
-    const right = i % 2 === 0;
-    d += ` C ${right ? 1100 : -100} ${y + 60}, ${right ? 1100 : -100} ${y + 240}, 500 ${y + 270}`;
-    d += ` S ${right ? -60 : 1060} ${y + 300}, ${right ? 380 : 620} ${y + 300}`;
-  }
-  return { d, height: n * h };
-}
-
+/** Pinned section: vertical scroll drives a horizontal journey of milestone cards. */
 export function Story() {
   const t = useT("landing.story");
   const items = t.raw<Milestone[]>("milestones") ?? [];
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 60%"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, mass: 0.4 });
-  const { d, height } = snake(items.length);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const p = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.4 });
+  const [vw, setVw] = useState(1280);
+  useEffect(() => {
+    const on = () => setVw(window.innerWidth);
+    on(); window.addEventListener("resize", on); return () => window.removeEventListener("resize", on);
+  }, []);
+  const slideW = vw < 640 ? vw * 0.86 : Math.min(560, vw * 0.5);
+  const x = useTransform(p, [0, 1], [0, -Math.max(0, items.length - 1) * slideW]);
+  const line = useTransform(p, [0, 1], [0, 1]);
 
+  if (reduce) {
+    return (
+      <section id="story" className="scroll-mt-24 py-24">
+        <SectionTitle label={t("label")} title={t("title")} />
+        <div className="container mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{items.map((m, i) => <Card key={i} m={m} i={i} />)}</div>
+      </section>
+    );
+  }
   return (
-    <section id="story" className="relative scroll-mt-24 overflow-hidden py-24">
-      <SectionTitle label={t("label")} title={t("title")} />
-      <div ref={ref} className="container relative mt-16">
-        <svg viewBox={`0 0 1000 ${height}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
-          <defs>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="b" />
-              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <linearGradient id="storyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#41c9f5" /></linearGradient>
-          </defs>
-          <path d={d} fill="none" stroke="rgba(31,122,232,.15)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-          <motion.path d={d} fill="none" stroke="url(#storyGrad)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" filter="url(#glow)"
-            style={{ pathLength: progress }} strokeLinecap="round" />
-        </svg>
-        <div className="relative">
-          {items.map((m, i) => {
-            const Icon = ICONS[m.icon] ?? Sparkles;
-            const left = i % 2 === 0;
-            return (
-              <div key={i} className={cn("flex min-h-[260px] items-center py-6 sm:min-h-[300px]", left ? "justify-start" : "justify-end")}>
-                <motion.div
-                  initial={{ opacity: 0, x: left ? -50 : 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-120px" }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="flex max-w-md items-start gap-4 glass rounded-3xl p-4 shadow-lift sm:gap-5"
-                >
-                  <div className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-teal-500 to-brand-500 text-white shadow-lg shadow-teal-500/30 sm:h-24 sm:w-24">
-                    <Icon className="h-9 w-9 sm:h-10 sm:w-10" />
-                  </div>
-                  <div className="pt-1">
-                    <p className="font-mono text-xs text-teal-600 dark:text-teal-300">0{i + 1}</p>
-                    <h3 className="mt-1 font-display text-lg font-bold text-ink dark:text-white sm:text-xl">{m.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{m.text}</p>
-                  </div>
-                </motion.div>
-              </div>
-            );
-          })}
+    <section id="story" ref={ref} className="relative scroll-mt-24" style={{ height: `${items.length * 70 + 60}vh` }}>
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
+        <SectionTitle label={t("label")} title={t("title")} />
+        <div className="relative mt-10">
+          <div className="container relative mb-8 h-1 overflow-hidden rounded-full bg-teal-100 dark:bg-white/10">
+            <motion.div style={{ scaleX: line }} className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-teal-600 to-brand-400" />
+          </div>
+          <motion.div style={{ x, paddingLeft: (vw - slideW) / 2 }} className="flex w-max">
+            {items.map((m, i) => <Slide key={i} m={m} i={i} n={items.length} p={p} w={slideW} />)}
+          </motion.div>
         </div>
       </div>
     </section>
+  );
+}
+
+function Slide({ m, i, n, p, w: width }: { m: Milestone; i: number; n: number; p: MotionValue<number>; w: number }) {
+  const c = n > 1 ? i / (n - 1) : 0;
+  const w = 1 / Math.max(1, n - 1);
+  const scale = useTransform(p, [c - w, c, c + w], [0.88, 1, 0.88]);
+  const opacity = useTransform(p, [c - w, c, c + w], [0.45, 1, 0.45]);
+  const rotate = useTransform(p, [c - w, c, c + w], [6, 0, -6]);
+  return (
+    <div className="flex shrink-0 justify-center px-3 sm:px-4" style={{ width }}>
+      <motion.div style={{ scale, opacity, rotateY: rotate, transformPerspective: 1200 }} className="w-full max-w-xl">
+        <Card m={m} i={i} />
+      </motion.div>
+    </div>
+  );
+}
+
+function Card({ m, i }: { m: Milestone; i: number }) {
+  const Icon = ICONS[m.icon] ?? Sparkles;
+  return (
+    <div className="relative overflow-hidden rounded-[32px] border border-teal-100 bg-white/90 p-8 shadow-lift backdrop-blur dark:border-white/10 dark:bg-slate-900/80 sm:p-10">
+      <span aria-hidden className="pointer-events-none absolute -right-4 -top-10 select-none font-display text-[10rem] font-black leading-none text-teal-500/[0.07]">0{i + 1}</span>
+      <span className={`grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br text-white shadow-lg ${TONES[i % TONES.length]}`}><Icon className="h-8 w-8" /></span>
+      <p className="mt-6 font-mono text-xs font-semibold text-teal-600 dark:text-teal-300">0{i + 1}</p>
+      <h3 className="mt-1 font-display text-2xl font-bold text-ink dark:text-white sm:text-3xl">{m.title}</h3>
+      <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{m.text}</p>
+    </div>
   );
 }

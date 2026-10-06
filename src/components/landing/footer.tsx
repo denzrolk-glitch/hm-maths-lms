@@ -47,7 +47,10 @@ export async function LandingFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-white/10">
+      <div aria-hidden className="pointer-events-none container relative select-none overflow-hidden">
+        <p className="bg-gradient-to-b from-white/[0.14] to-transparent bg-clip-text text-center font-display text-[18vw] font-black leading-[0.8] tracking-tighter text-transparent lg:text-[13rem]">HM MATHS</p>
+      </div>
+      <div className="relative border-t border-white/10">
         <div className="container flex flex-col gap-2 py-5 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p>{t("footer.rights", { year: new Date().getFullYear() })}</p>
           <p className="text-slate-400">{t("footer.notice")}</p>

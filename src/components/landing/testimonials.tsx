@@ -1,86 +1,76 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Play, Quote, Volume2, VolumeX } from "lucide-react";
+import { Play, Quote, Star, X } from "lucide-react";
 import { useT } from "@/i18n/client";
+import { initials } from "@/lib/utils";
 import { SectionTitle } from "./section-title";
+import { EASE } from "./motion-kit";
 
 type Item = { name: string; meta: string; text: string };
+
+function QuoteCard({ it }: { it: Item }) {
+  return (
+    <figure className="group mx-2.5 w-[320px] shrink-0 rounded-3xl border border-teal-100 bg-white p-6 shadow-soft transition duration-500 hover:-translate-y-1.5 hover:rotate-[-0.6deg] hover:shadow-lift dark:border-white/10 dark:bg-slate-900 sm:w-[380px]">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-0.5 text-amber-400">{Array.from({ length: 5 }, (_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}</div>
+        <Quote className="h-6 w-6 text-teal-200 transition group-hover:text-teal-400" />
+      </div>
+      <blockquote className="mt-4 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">“{it.text}”</blockquote>
+      <figcaption className="mt-5 flex items-center gap-3">
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-teal-500 to-brand-400 text-sm font-bold text-white">{initials(it.name)}</span>
+        <span><span className="block text-sm font-semibold text-ink dark:text-white">{it.name}</span><span className="block text-xs text-slate-500">{it.meta}</span></span>
+      </figcaption>
+    </figure>
+  );
+}
+
+function Row({ items, reverse, duration }: { items: Item[]; reverse?: boolean; duration: number }) {
+  return (
+    <div className="group/row flex overflow-hidden py-3 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <div className="flex shrink-0 animate-marquee group-hover/row:[animation-play-state:paused]" style={{ animationDuration: `${duration}s`, animationDirection: reverse ? "reverse" : "normal" }}>
+        {[...items, ...items, ...items, ...items].map((it, i) => <QuoteCard key={i} it={it} />)}
+      </div>
+    </div>
+  );
+}
 
 export function Testimonials({ videoId }: { videoId: string }) {
   const t = useT("landing.testimonials");
   const items = t.raw<Item[]>("items") ?? [];
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    if (items.length < 2) return;
-    const id = setInterval(() => setI((v) => (v + 1) % items.length), 6000);
-    return () => clearInterval(id);
-  }, [items.length]);
-
-  const cur = items[i];
+  const [open, setOpen] = useState(false);
+  const half = Math.ceil(items.length / 2);
+  const a = items.length > 3 ? items.slice(0, half) : items;
+  const b = items.length > 3 ? items.slice(half) : items;
   return (
-    <section id="testimonials" className="relative scroll-mt-24 py-24">
+    <section id="testimonials" className="relative scroll-mt-24 overflow-hidden py-28">
       <SectionTitle label={t("label")} title={t("title")} />
-      <motion.div initial={{ opacity: 0, y: 40, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }} className="container mt-12">
-        <div className="relative mx-auto min-h-[420px] max-w-5xl sm:min-h-0 overflow-hidden rounded-[28px] bg-gradient-to-br from-teal-700 via-teal-600 to-brand-500 shadow-lift sm:aspect-video">
-          {videoId && playing ? (
-            <iframe className="absolute inset-0 h-full w-full" title={t("watch")} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen
-              src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&rel=0&modestbranding=1&playsinline=1`} />
-          ) : (
-            <>
-              <div className="bg-dots absolute inset-0 opacity-25" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,255,255,.22),transparent_60%)]" />
-              {videoId ? (
-                <img src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-luminosity" />
-              ) : null}
-              <div className="absolute inset-0 flex flex-col justify-center px-6 pb-16 pt-6 sm:px-16 sm:pb-6">
-                <Quote className="h-10 w-10 text-white/70 sm:h-14 sm:w-14" />
-                <AnimatePresence mode="wait">
-                  {cur ? (
-                    <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
-                      <p className="mt-4 max-w-3xl font-display text-lg font-semibold leading-snug text-white sm:text-3xl">“{cur.text}”</p>
-                      <p className="mt-5 text-sm font-semibold text-brand-100 sm:text-base">{cur.name}</p>
-                      <p className="text-xs text-white/70 sm:text-sm">{cur.meta}</p>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </div>
-            </>
-          )}
-
-          {!playing && (
-            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 sm:bottom-6 sm:left-6 sm:right-6">
-              <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-teal-800 shadow-md sm:px-5 sm:text-sm">{t("watch")}</span>
-              <div className="flex items-center gap-2">
-                {items.length > 1 && (
-                  <>
-                    <button type="button" aria-label={t("previous")} onClick={() => setI((v) => (v - 1 + items.length) % items.length)}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur transition hover:bg-white/30"><ChevronLeft className="h-5 w-5" /></button>
-                    <button type="button" aria-label={t("next")} onClick={() => setI((v) => (v + 1) % items.length)}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur transition hover:bg-white/30"><ChevronRight className="h-5 w-5" /></button>
-                  </>
-                )}
-                {videoId ? (
-                  <>
-                    <button type="button" aria-label={muted ? t("unmute") : t("mute")} onClick={() => setMuted((m) => !m)}
-                      className="grid h-12 w-12 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/30">
-                      {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                    </button>
-                    <button type="button" aria-label={t("play")} onClick={() => setPlaying(true)}
-                      className="grid h-14 w-14 place-items-center rounded-full bg-white text-teal-700 shadow-xl transition hover:scale-105">
-                      <Play className="h-6 w-6 fill-teal-700" />
-                    </button>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          )}
-        </div>
+      {videoId && (
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: EASE }} className="mt-8 flex justify-center">
+          <button type="button" onClick={() => setOpen(true)} className="group inline-flex items-center gap-3 rounded-full bg-white py-2 pl-2 pr-5 text-sm font-semibold text-teal-800 shadow-lift transition hover:-translate-y-0.5 dark:bg-slate-900 dark:text-white">
+            <span className="relative grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-teal-600 to-brand-500 text-white">
+              <span className="absolute inset-0 animate-ping rounded-full bg-teal-400/40" /><Play className="relative h-4 w-4 fill-white" />
+            </span>
+            {t("watch")}
+          </button>
+        </motion.div>
+      )}
+      <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 1, ease: EASE }} className="mt-12">
+        <Row items={a} duration={a.length * 22} />
+        <Row items={b} duration={b.length * 26} reverse />
       </motion.div>
+      <AnimatePresence>
+        {open && videoId && (
+          <motion.div className="fixed inset-0 z-[70] grid place-items-center bg-ink/70 p-4 backdrop-blur" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)}>
+            <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", stiffness: 220, damping: 22 }}
+              className="relative aspect-video w-full max-w-4xl overflow-hidden rounded-3xl bg-black shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <iframe className="absolute inset-0 h-full w-full" title={t("watch")} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen
+                src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`} />
+              <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/50 text-white"><X className="h-4 w-4" /></button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
