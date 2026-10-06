@@ -1,0 +1,29 @@
+{
+  "_comment": "Editable site data (non-translated). Text lives in src/i18n/messages/*.",
+  "contact": {
+    "phone": "+94 70 000 0000",
+    "whatsapp": "0700000000",
+    "email": "hello@hmmaths.lk",
+    "address": "Panadura, Sri Lanka"
+  },
+  "social": {
+    "facebook": "https://facebook.com/",
+    "youtube": "https://youtube.com/",
+    "tiktok": "https://tiktok.com/",
+    "instagram": "https://instagram.com/"
+  },
+  "bankAccounts": [
+    { "bank": "Bank of Ceylon", "branch": "Panadura", "accountName": "H. MADUSANKA", "accountNumber": "0000 0000 0000" },
+    { "bank": "Commercial Bank", "branch": "Horana", "accountName": "H. MADUSANKA", "accountNumber": "0000 0000 0000" }
+  ],
+  "channels": [
+    { "key": "2026theory", "url": "https://whatsapp.com/channel/", "color": "#0f766e", "badge": "26" },
+    { "key": "2026revision", "url": "https://whatsapp.com/channel/", "color": "#7c2d12", "badge": "26" },
+    { "key": "2027theory", "url": "https://whatsapp.com/channel/", "color": "#1e3a8a", "badge": "27" },
+    { "key": "2028theory", "url": "https://whatsapp.com/channel/", "color": "#701a75", "badge": "28" },
+    { "key": "papers", "url": "https://whatsapp.com/channel/", "color": "#3f3f46", "badge": "P" }
+  ],
+  "testimonialVideoId": "",
+  "heroImage": "/images/tutor.png",
+  "authImage": "/images/auth-bg.jpg"
+}

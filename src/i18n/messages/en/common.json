@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "HM Maths — Hasitha Madusanka · A/L Combined Mathematics",
+    "titleTemplate": "%s · HM Maths",
+    "description": "Combined Mathematics classes for G.C.E. A/L by Hasitha Madusanka — Panadura, Horana, Mathugama, Kalutara and island-wide online. Live classes, recordings, tutes and online papers.",
+    "keywords": [
+      "Combined Maths",
+      "A/L",
+      "Hasitha Madusanka",
+      "Panadura",
+      "Horana",
+      "Kalutara",
+      "Mathugama",
+      "online class"
+    ]
+  },
+  "brand": {
+    "short": "HM Maths",
+    "tutor": "Hasitha Madusanka",
+    "subject": "Combined Mathematics",
+    "sub": "Hasitha Madusanka · Combined Maths"
+  },
+  "free": "Free",
+  "perMonth": "{amount} / month",
+  "alBatch": "{year} A/L",
+  "dash": "—",
+  "classTypes": {
+    "Theory": "Theory",
+    "Revision": "Revision",
+    "Paper Class": "Paper Class",
+    "Extra Class": "Extra Class",
+    "Free Seminar": "Free Seminar"
+  },
+  "towns": {
+    "Panadura": "Panadura",
+    "Horana": "Horana",
+    "Mathugama": "Mathugama",
+    "Kalutara": "Kalutara",
+    "Online": "Online"
+  },
+  "noticeTags": {
+    "General": "General",
+    "Urgent": "Urgent",
+    "Exam Notice": "Exam Notice"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "shipped": "Shipped",
+    "in_progress": "In progress",
+    "submitted": "Submitted",
+    "graded": "Graded"
+  },
+  "examTypes": {
+    "mcq": "MCQ",
+    "structured": "Structured"
+  },
+  "actions": {
+    "save": "Save",
+    "saveChanges": "Save changes",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "close": "Close",
+    "more": "More",
+    "viewAll": "View all",
+    "logout": "Log out",
+    "submit": "Submit",
+    "open": "Open",
+    "download": "Download",
+    "refresh": "Refresh",
+    "create": "Create",
+    "add": "Add",
+    "update": "Update",
+    "home": "Home"
+  },
+  "language": {
+    "switchTo": "Switch language to {lang}"
+  },
+  "shell": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "theme": "Theme",
+    "toggleTheme": "Toggle theme",
+    "admin": "Admin",
+    "notifications": "Notifications",
+    "cart": "Store",
+    "account": "Account",
+    "helpDesk": "Help Desk",
+    "privacy": "Privacy Policy",
+    "backToSite": "Back to website"
+  },
+  "file": {
+    "choose": "Choose file",
+    "uploading": "Uploading…",
+    "replace": "Uploaded — click to replace",
+    "limit": "Max {mb} MB",
+    "limitWithTypes": "Max {mb} MB · {types}",
+    "tooBig": "{name} is larger than {mb} MB",
+    "clear": "Clear files",
+    "current": "current file"
+  },
+  "bank": {
+    "title": "Bank account details",
+    "amount": "Amount to pay:",
+    "name": "Name",
+    "account": "Account",
+    "branch": "Branch",
+    "reference": "Write your Student ID as the reference / remark when you deposit or transfer."
+  },
+  "idCard": {
+    "subtitle": "Combined Mathematics · Student ID",
+    "alYear": "A/L Year",
+    "center": "Center",
+    "nic": "NIC",
+    "admin": "ADMIN"
+  },
+  "video": {
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen"
+  },
+  "live": {
+    "ended": "This live session has ended. The recording will be added to Lesson Recordings.",
+    "opensBefore": "Join opens {min} minutes before class",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec",
+    "startsIn": "Class starts in {time}",
+    "durationDHM": "{d}d {h}h {m}m",
+    "durationHM": "{h}h {m}m",
+    "join": "Join Live Class",
+    "liveNow": "LIVE NOW",
+    "startingIn": "Starting in {min} min",
+    "loading": "Loading join link…"
+  },
+  "notices": {
+    "newNotice": "New notice: {title}"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you are looking for doesn't exist or has been moved.",
+    "home": "Go home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "text": "An unexpected error occurred. Please try again.",
+    "retry": "Try again",
+    "reference": "Error reference: {digest}"
+  },
+  "accountIssue": {
+    "title": "We couldn't load your profile",
+    "text": "You are signed in, but your student profile was not found. This usually means the database setup script has not been run yet, or your profile was removed.",
+    "admin": "If you are the administrator: open Supabase → SQL Editor and run supabase/migrations/0001_init.sql, then sign in again.",
+    "student": "If you are a student, please contact the class on WhatsApp.",
+    "logout": "Log out and try again"
+  },
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ]
+}
