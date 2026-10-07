@@ -436,13 +436,43 @@
     "account": "Account"
   },
   "streak": {
-    "days": "{n}-day streak",
-    "label": "Study streak · keep it going!",
-    "paperTitle": "Weekly paper streak",
-    "studyTitle": "Daily study streak",
-    "weeks": "weeks",
-    "daysUnit": "days",
+    "title": "Your streaks",
+    "subtitle": "Keep the runs going — every paper counts.",
+    "none": "No active streak yet",
+    "noneSub": "Sit this week's paper to start one",
+    "inARow": "{n} in a row",
+    "papersRow": "{n} papers in a row",
     "best": "Best {n}",
+    "next": "Next goal: {n}",
+    "view": "View all",
+    "types": {
+      "top3": {
+        "name": "Top 3 streak",
+        "rule": "All-island top 3 in a row"
+      },
+      "top10": {
+        "name": "Top 10 streak",
+        "rule": "All-island top 10 in a row"
+      },
+      "score75": {
+        "name": "75+ streak",
+        "rule": "75% (A) or more in a row"
+      },
+      "pass50": {
+        "name": "50+ streak",
+        "rule": "50% or more in a row"
+      },
+      "improve": {
+        "name": "Improving streak",
+        "rule": "Beat your previous score in a row"
+      },
+      "attend": {
+        "name": "Paper streak",
+        "rule": "Weekly papers sat in a row"
+      }
+    },
+    "paperTitle": "Weekly paper streak",
+    "weeks": "weeks",
     "keepGoing": "Don't break it this week!",
     "start": "Sit this week's paper to start"
   },
@@ -488,9 +518,21 @@
       "name": "Dedicated",
       "hint": "Sit 10 papers"
     },
-    "study7": {
-      "name": "Daily learner",
-      "hint": "7-day study streak"
+    "hot10": {
+      "name": "Top 10 ×3",
+      "hint": "All-island top 10 in 3 papers in a row"
+    },
+    "pass50x5": {
+      "name": "Consistent",
+      "hint": "50% or more in 5 papers in a row"
+    },
+    "score75x3": {
+      "name": "A-streak",
+      "hint": "75% or more in 3 papers in a row"
+    },
+    "improve3": {
+      "name": "Rising star",
+      "hint": "Beat your previous score 3 times in a row"
     }
   },
   "ranks": {

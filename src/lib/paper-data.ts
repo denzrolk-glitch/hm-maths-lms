@@ -2,8 +2,6 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { OverallLeaderRow, Paper, PaperLeaderRow, PaperStats } from "./papers";
 
-export type StudyStreak = { current: number; best: number; week: boolean[] };
-
 const num = <T extends object>(r: T, keys: (keyof T)[]): T => {
   const o = { ...r } as Record<keyof T, unknown>;
   for (const k of keys) if (o[k] !== null && o[k] !== undefined) o[k] = Number(o[k]);
@@ -18,10 +16,6 @@ export async function getPaperStats(supabase: SupabaseClient): Promise<PaperStat
   return num(s, ["papers", "avg_pct", "best_pct", "points", "full_marks", "streak", "best_streak"]);
 }
 
-export async function getStudyStreak(supabase: SupabaseClient): Promise<StudyStreak | null> {
-  const { data, error } = await supabase.rpc("log_activity");
-  return error ? null : (data as StudyStreak);
-}
 
 export async function getPaperBoard(supabase: SupabaseClient, paperId: string, town: string | null, limit = 100): Promise<PaperLeaderRow[]> {
   const { data } = await supabase.rpc("get_paper_leaderboard", { p_paper: paperId, p_town: town, p_limit: limit });

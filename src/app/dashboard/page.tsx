@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  ArrowRight, BookOpen, CalendarClock, CreditCard, FileText, HelpCircle, MessageCircle, PlayCircle, Radio, ShoppingBag, Sparkles, Trophy, Truck, Users,
+  ArrowRight, BookOpen, CalendarClock, CreditCard, FileText, HelpCircle, PlayCircle, Radio, ShoppingBag, Sparkles, Trophy, Truck,
   type LucideIcon,
 } from "lucide-react";
 import { requireUser } from "@/lib/auth";
@@ -14,11 +14,12 @@ import { NoticesRealtime } from "@/components/notices-realtime";
 import { BannerCarousel } from "@/components/portal/banner-carousel";
 import { Gauge, ResultsChart } from "@/components/portal/charts";
 import { RankTile, ScoreRing, StreakPanel } from "@/components/portal/progress-widgets";
-import { getMyPapers, getPaperStats, getStudyStreak } from "@/lib/paper-data";
-import { grade, pct } from "@/lib/papers";
+import { getMyPapers, getPaperStats } from "@/lib/paper-data";
+import { grade, normalizeStreaks, pct } from "@/lib/papers";
 import { getFormat, getT } from "@/i18n/server";
 import { SITE } from "@/content/site";
 import { cn, currentMonth, whatsappLink } from "@/lib/utils";
+import { WhatsAppIcon } from "@/components/brand-icons";
 
 export async function generateMetadata() {
   return { title: (await getT("portal.nav"))("dashboard") };
@@ -38,13 +39,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const { supabase, user, profile } = await requireUser();
   const [t, tc, f] = await Promise.all([getT("portal.dashboard"), getT("common"), getFormat()]);
   const month = currentMonth();
-  const [enrollments, notices, live, orders, stats, study, papers] = await Promise.all([
+  const [enrollments, notices, live, orders, stats, papers] = await Promise.all([
     getMyEnrollments(supabase, user.id),
     getNotices(supabase, 3),
     getUpcomingLive(supabase, 4),
     supabase.from("orders").select("id, status, created_at, products(title)").eq("student_id", user.id).order("created_at", { ascending: false }).limit(3),
     getPaperStats(supabase),
-    getStudyStreak(supabase),
     getMyPapers(supabase, user.id, profile.al_year ?? null),
   ]);
   const thisMonth = enrollments.filter((e) => e.month === month && e.status === "approved" && e.classes);
@@ -67,11 +67,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     { href: "/dashboard/store", label: t("tiles.store"), hint: t("tiles.storeHint"), icon: ShoppingBag, tone: "from-violet-500 to-indigo-600 shadow-violet-500/30" },
   ];
   const wa = whatsappLink(SITE.contact.whatsapp, t("support.waText", { id: profile.student_id ?? "" })) ?? "#";
-  const support: { href: string; label: string; icon: LucideIcon; cls: string; external?: boolean }[] = [
-    { href: SITE.channels[0]?.url ?? wa, label: t("support.channel"), icon: Users, cls: "from-amber-400 to-orange-500", external: true },
+  const WaWhite = ({ className }: { className?: string }) => <WhatsAppIcon mono className={cn("text-white", className)} />;
+  const support: { href: string; label: string; icon: LucideIcon | typeof WaWhite; cls: string; external?: boolean }[] = [
+    { href: SITE.channels[0]?.url ?? wa, label: t("support.channel"), icon: WaWhite, cls: "from-[#25D366] to-[#128C7E]", external: true },
     { href: "/#support", label: t("support.faq"), icon: HelpCircle, cls: "from-emerald-400 to-emerald-600" },
     { href: "/dashboard/free-zone", label: t("support.tutorials"), icon: PlayCircle, cls: "from-rose-400 to-pink-600" },
-    { href: wa, label: t("support.contact"), icon: MessageCircle, cls: "from-teal-500 to-brand-500", external: true },
+    { href: wa, label: t("support.contact"), icon: WaWhite, cls: "from-[#25D366] to-[#128C7E]", external: true },
   ];
 
   return (
@@ -137,7 +138,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ))}
       </Stagger>
 
-      <Reveal><StreakPanel paper={{ current: stats?.streak ?? 0, best: stats?.best_streak ?? 0 }} study={study} /></Reveal>
+      <Reveal><StreakPanel streaks={normalizeStreaks(stats)} /></Reveal>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.45fr]">
         <div className="space-y-6">

@@ -32,6 +32,9 @@ await db.exec(sql2);
 const sql3 = readFileSync(new URL("../supabase/migrations/0003_papers_leaderboards.sql", import.meta.url), "utf8");
 await db.exec(sql3);
 await db.exec(sql3);
+const sql4 = readFileSync(new URL("../supabase/migrations/0004_performance_streaks.sql", import.meta.url), "utf8");
+await db.exec(sql4);
+await db.exec(sql4);
 assert.equal((await db.query(`select live_url from public.lesson_live_links where lesson_id='00000000-0000-0000-0000-0000000000d0'`)).rows[0].live_url, "https://zoom.us/j/1");
 assert.equal((await db.query(`select 1 from information_schema.columns where table_name='lessons' and column_name='live_url'`)).rows.length, 0);
 await db.exec(`delete from public.classes where id='00000000-0000-0000-0000-0000000000c0'`);
@@ -249,6 +252,10 @@ console.log("✓ season leaderboard: points, batch + date filters");
 
 const [{ get_my_paper_stats: st1 }] = await as(S1, () => q(`select public.get_my_paper_stats()`));
 assert.equal(st1.papers, 3); assert.equal(st1.streak, 3); assert.equal(st1.best_streak, 3);
+assert.deepEqual(st1.streaks, {
+  attend: { current: 3, best: 3 }, pass50: { current: 3, best: 3 }, score75: { current: 0, best: 2 },
+  top10: { current: 3, best: 3 }, top3: { current: 3, best: 3 }, improve: { current: 0, best: 1 },
+});
 assert.equal(st1.last.title, "Week 3"); assert.equal(st1.last.rank_island, 1); assert.equal(st1.last.rank_town, 1);
 const [{ get_my_paper_stats: st2 }] = await as(S2, () => q(`select public.get_my_paper_stats()`));
 assert.equal(st2.papers, 1); assert.equal(st2.streak, 1);
@@ -256,7 +263,7 @@ await mark(p3, S3, 0); await as(ADMIN, () => q(`delete from public.paper_marks w
 const [{ get_my_paper_stats: st3 }] = await as(S3, () => q(`select public.get_my_paper_stats()`));
 assert.equal(st3.streak, 1); assert.equal(st3.best_streak, 1);
 await fails(as(S1, () => q(`select public.get_my_paper_stats($1)`, [S3])), "reading someone else's stats");
-console.log("✓ weekly-paper streaks (missed paper resets the streak)");
+console.log("✓ streaks: weekly papers, 50+, 75+, top 10, top 3, improving (a miss resets the run)");
 
 const [{ log_activity: a1 }] = await as(S1, () => q(`select public.log_activity()`));
 assert.equal(a1.current, 1); assert.equal(a1.week.length, 7); assert.equal(a1.week[6], true);

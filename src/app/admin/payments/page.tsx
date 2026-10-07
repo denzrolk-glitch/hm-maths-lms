@@ -1,7 +1,8 @@
 import type { Profile } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
-import { CreditCard, ExternalLink, MessageCircle } from "lucide-react";
+import { CreditCard, ExternalLink } from "lucide-react";
+import { WhatsAppIcon } from "@/components/brand-icons";
 import { requireAdmin } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
 import { StatusBadge } from "@/components/status-badge";
@@ -86,7 +87,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
                   </dl>
                   <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t pt-3">
                     <ReviewButtons id={r.id} />
-                    {wa && <a href={wa} target="_blank" rel="noreferrer" className={buttonVariants({ size: "sm", variant: "ghost", className: "text-success" })}><MessageCircle /> {t("whatsapp")}</a>}
+                    {wa && <a href={wa} target="_blank" rel="noreferrer" className={buttonVariants({ size: "sm", variant: "ghost", className: "text-[#128C7E] hover:text-[#128C7E] dark:text-[#25D366]" })}><WhatsAppIcon /> {t("whatsapp")}</a>}
                   </div>
                 </div>
               </div>

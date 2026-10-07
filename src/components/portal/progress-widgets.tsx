@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Award, BookOpenCheck, CalendarCheck, Crown, Flame, Gem, Lock, MapPin, Medal, Rocket, Star, Target, Trophy, Zap,
+  Award, BookOpenCheck, CircleCheckBig, Crown, Flame, Gem, Lock, MapPin, Medal, Rocket, Star, Target, TrendingUp, Trophy, Zap,
   type LucideIcon,
 } from "lucide-react";
 import { useT } from "@/i18n/client";
 import { CountUp } from "@/components/motion";
 import { cn } from "@/lib/utils";
-import type { BadgeKey } from "@/lib/papers";
+import { STREAK_KEYS, nextMilestone, type BadgeKey, type StreakKey, type Streaks } from "@/lib/papers";
 
 /** Animated circular percentage ring. */
 export function ScoreRing({ value, size = 132, stroke = 12, label, sub }: { value: number; size?: number; stroke?: number; label?: string; sub?: string }) {
@@ -37,52 +37,53 @@ export function ScoreRing({ value, size = 132, stroke = 12, label, sub }: { valu
   );
 }
 
-function colomboWeekday(offsetDays: number) {
-  const d = new Date(Date.now() - offsetDays * 86400000);
-  const wd = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Colombo", weekday: "short" }).format(d);
-  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(wd);
-}
+export const STREAK_META: Record<StreakKey, { icon: LucideIcon; tone: string }> = {
+  top3: { icon: Crown, tone: "from-amber-300 to-yellow-500" },
+  top10: { icon: Trophy, tone: "from-orange-400 to-rose-500" },
+  score75: { icon: Star, tone: "from-fuchsia-400 to-violet-600" },
+  pass50: { icon: CircleCheckBig, tone: "from-emerald-400 to-teal-600" },
+  improve: { icon: TrendingUp, tone: "from-sky-400 to-cyan-600" },
+  attend: { icon: Flame, tone: "from-orange-500 to-red-600" },
+};
 
-/** Two streaks side by side: weekly-paper streak and daily study streak (last 7 days). */
-export function StreakPanel({ paper, study, className }: { paper: { current: number; best: number }; study: { current: number; best: number; week: boolean[] } | null; className?: string }) {
+/** Performance streaks: top 3 / top 10 / 75+ / 50+ / improving / weekly papers. */
+export function StreakPanel({ streaks, className }: { streaks: Streaks; className?: string }) {
   const t = useT("portal.streak");
-  const tc = useT("common.schedule");
-  const days = tc.raw<string[]>("days");
-  const week = study?.week ?? Array(7).fill(false);
   return (
-    <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2", className)}>
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 p-5 text-white shadow-lift">
-        <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/15 blur-xl" />
-        <div className="relative flex items-center gap-4">
-          <motion.span initial={{ scale: 0.6, rotate: -10 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 200 }}
-            className="grid h-14 w-14 place-items-center rounded-2xl bg-white/20 backdrop-blur"><Flame className={cn("h-7 w-7", paper.current > 0 && "animate-flicker")} /></motion.span>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/80">{t("paperTitle")}</p>
-            <p className="font-display text-3xl font-extrabold leading-tight"><CountUp value={paper.current} /> <span className="text-base font-semibold">{t("weeks")}</span></p>
-            <p className="text-xs text-white/85">{t("best", { n: paper.best })} · {paper.current > 0 ? t("keepGoing") : t("start")}</p>
-          </div>
-        </div>
+    <div className={cn("rounded-3xl border border-border/80 bg-card p-5 shadow-soft", className)}>
+      <div className="mb-4">
+        <p className="font-display text-lg font-bold">{t("title")}</p>
+        <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
       </div>
-      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-card p-5 shadow-soft">
-        <div className="flex items-center gap-4">
-          <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-teal-500 to-brand-500 text-white shadow-lg shadow-primary/25"><CalendarCheck className="h-7 w-7" /></span>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("studyTitle")}</p>
-            <p className="font-display text-3xl font-extrabold leading-tight"><CountUp value={study?.current ?? 0} /> <span className="text-base font-semibold text-muted-foreground">{t("daysUnit")}</span></p>
-            <p className="text-xs text-muted-foreground">{t("best", { n: study?.best ?? 0 })}</p>
-          </div>
-        </div>
-        <div className="mt-4 grid grid-cols-7 gap-1.5">
-          {week.map((on, i) => (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <motion.span initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05, type: "spring", stiffness: 260 }}
-                className={cn("grid h-7 w-7 place-items-center rounded-full text-[10px]", on ? "bg-gradient-to-br from-teal-500 to-brand-500 text-white shadow-md shadow-primary/25" : "bg-muted text-muted-foreground")}>
-                {on ? <Flame className="h-3.5 w-3.5" /> : null}
-              </motion.span>
-              <span className="text-[10px] font-medium text-muted-foreground">{days[colomboWeekday(6 - i)]?.slice(0, 2)}</span>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        {STREAK_KEYS.map((k, i) => {
+          const { icon: Icon, tone } = STREAK_META[k];
+          const v = streaks[k];
+          const goal = nextMilestone(v.current);
+          const on = v.current > 0;
+          return (
+            <motion.div key={k} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+              title={t(`types.${k}.rule`)}
+              className={cn("relative overflow-hidden rounded-2xl border p-3.5 transition", on ? "border-transparent bg-gradient-to-br text-white shadow-lift " + tone : "border-dashed bg-muted/40")}>
+              {on && <div className="pointer-events-none absolute -right-5 -top-5 h-16 w-16 rounded-full bg-white/20 blur-xl" />}
+              <div className="relative flex items-center gap-2.5">
+                <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl", on ? "bg-white/20" : "bg-muted text-muted-foreground")}>
+                  <Icon className={cn("h-[18px] w-[18px]", on && k === "attend" && "animate-flicker")} />
+                </span>
+                <p className={cn("min-w-0 text-xs font-semibold leading-tight", !on && "text-muted-foreground")}>{t(`types.${k}.name`)}</p>
+              </div>
+              <p className="relative mt-3 font-display text-3xl font-extrabold leading-none"><CountUp value={v.current} /></p>
+              <p className={cn("relative mt-1 text-[11px]", on ? "text-white/85" : "text-muted-foreground")}>{t(`types.${k}.rule`)}</p>
+              <div className={cn("relative mt-2.5 h-1.5 overflow-hidden rounded-full", on ? "bg-white/25" : "bg-muted")}>
+                <motion.span className={cn("block h-full rounded-full", on ? "bg-white" : "bg-muted-foreground/30")}
+                  initial={{ width: 0 }} whileInView={{ width: `${Math.min(100, (v.current / goal) * 100)}%` }} viewport={{ once: true }} transition={{ duration: 0.9 }} />
+              </div>
+              <p className={cn("relative mt-1.5 flex justify-between text-[10px] font-medium", on ? "text-white/80" : "text-muted-foreground")}>
+                <span>{t("best", { n: v.best })}</span><span>{t("next", { n: goal })}</span>
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
@@ -99,7 +100,10 @@ const BADGE_ICONS: Record<BadgeKey, { icon: LucideIcon; tone: string }> = {
   townChampion: { icon: MapPin, tone: "from-emerald-400 to-teal-600" },
   champion: { icon: Crown, tone: "from-amber-300 to-yellow-500" },
   papers10: { icon: BookOpenCheck, tone: "from-violet-400 to-indigo-600" },
-  study7: { icon: Award, tone: "from-rose-400 to-pink-600" },
+  hot10: { icon: Trophy, tone: "from-orange-400 to-rose-500" },
+  pass50x5: { icon: CircleCheckBig, tone: "from-emerald-400 to-teal-600" },
+  score75x3: { icon: Award, tone: "from-fuchsia-400 to-violet-600" },
+  improve3: { icon: TrendingUp, tone: "from-sky-400 to-cyan-600" },
 };
 
 export function Achievements({ items }: { items: { key: BadgeKey; unlocked: boolean }[] }) {

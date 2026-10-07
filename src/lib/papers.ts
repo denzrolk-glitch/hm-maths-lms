@@ -36,6 +36,7 @@ export interface PaperStats {
   full_marks?: number;
   streak: number;
   best_streak: number;
+  streaks?: Partial<Record<StreakKey, StreakValue>>;
   town: Town | null;
   al_year: number | null;
   last: null | {
@@ -44,6 +45,31 @@ export interface PaperStats {
     rank_island: number; entrants_island: number; rank_town: number; entrants_town: number;
   };
 }
+
+/** Performance streaks (from get_my_paper_stats). Order = display order. */
+export const STREAK_KEYS = ["top3", "top10", "score75", "pass50", "improve", "attend"] as const;
+export type StreakKey = (typeof STREAK_KEYS)[number];
+export type StreakValue = { current: number; best: number };
+export type Streaks = Record<StreakKey, StreakValue>;
+
+export function normalizeStreaks(s: PaperStats | null): Streaks {
+  const out = {} as Streaks;
+  for (const k of STREAK_KEYS) {
+    const v = s?.streaks?.[k];
+    out[k] = { current: Number(v?.current ?? (k === "attend" ? s?.streak ?? 0 : 0)), best: Number(v?.best ?? (k === "attend" ? s?.best_streak ?? 0 : 0)) };
+  }
+  return out;
+}
+
+/** The streak to headline: highest current run (ties → the harder streak, i.e. earlier in STREAK_KEYS). */
+export function hottestStreak(st: Streaks): { key: StreakKey; value: StreakValue } | null {
+  let best: { key: StreakKey; value: StreakValue } | null = null;
+  for (const k of STREAK_KEYS) if (st[k].current > 0 && (!best || st[k].current > best.value.current)) best = { key: k, value: st[k] };
+  return best;
+}
+
+/** Next milestone for a streak run (3 → 5 → 10 → 15 → 20 …). */
+export const nextMilestone = (n: number) => [3, 5, 10, 15, 20, 30, 50].find((m) => m > n) ?? n + 10;
 
 /** Leaderboard scopes shown as tabs: all-island + every class center. */
 export const SCOPES = ["island", ...TOWNS] as const;
@@ -78,24 +104,27 @@ export function grade(p: number): "A" | "B" | "C" | "S" | "F" {
   return p >= 75 ? "A" : p >= 65 ? "B" : p >= 50 ? "C" : p >= 35 ? "S" : "F";
 }
 
-export type BadgeKey = "firstPaper" | "streak3" | "streak5" | "streak10" | "top10" | "champion" | "townChampion" | "fullMarks" | "score90" | "study7" | "papers10";
+export type BadgeKey = "firstPaper" | "streak3" | "streak5" | "streak10" | "top10" | "champion" | "townChampion" | "fullMarks" | "score90" | "hot10" | "pass50x5" | "score75x3" | "improve3" | "papers10";
 
-/** Achievements unlocked from paper stats + daily study streak. */
-export function achievements(s: PaperStats | null, study: { best: number } | null): { key: BadgeKey; unlocked: boolean }[] {
+/** Achievements unlocked from paper stats + performance streaks. */
+export function achievements(s: PaperStats | null): { key: BadgeKey; unlocked: boolean }[] {
   const n = s?.papers ?? 0;
-  const best = s?.best_streak ?? 0;
+  const st = normalizeStreaks(s);
   const last = s?.last;
   return [
     { key: "firstPaper", unlocked: n >= 1 },
-    { key: "streak3", unlocked: best >= 3 },
-    { key: "streak5", unlocked: best >= 5 },
-    { key: "streak10", unlocked: best >= 10 },
+    { key: "streak3", unlocked: st.attend.best >= 3 },
+    { key: "streak5", unlocked: st.attend.best >= 5 },
+    { key: "streak10", unlocked: st.attend.best >= 10 },
+    { key: "pass50x5", unlocked: st.pass50.best >= 5 },
+    { key: "score75x3", unlocked: st.score75.best >= 3 },
+    { key: "improve3", unlocked: st.improve.best >= 3 },
+    { key: "hot10", unlocked: st.top10.best >= 3 },
     { key: "score90", unlocked: (s?.best_pct ?? 0) >= 90 },
     { key: "fullMarks", unlocked: (s?.full_marks ?? 0) >= 1 },
-    { key: "top10", unlocked: !!last && last.rank_island <= 10 },
+    { key: "top10", unlocked: st.top10.best >= 1 || (!!last && last.rank_island <= 10) },
     { key: "townChampion", unlocked: !!last && last.rank_town === 1 },
-    { key: "champion", unlocked: !!last && last.rank_island === 1 },
+    { key: "champion", unlocked: st.top3.best >= 1 && !!last && last.rank_island === 1 },
     { key: "papers10", unlocked: n >= 10 },
-    { key: "study7", unlocked: (study?.best ?? 0) >= 7 },
   ];
 }

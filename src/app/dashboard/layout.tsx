@@ -1,17 +1,18 @@
-import { DashboardShell, type ShellGroup, type ShellItem, type Streak } from "@/components/dashboard-shell";
+import { DashboardShell, type ShellGroup, type ShellItem } from "@/components/dashboard-shell";
+import { normalizeStreaks, type PaperStats } from "@/lib/papers";
 import { requireUser } from "@/lib/auth";
 import { getT } from "@/i18n/server";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { supabase, profile } = await requireUser();
   const [t, tg] = await Promise.all([getT("portal.nav"), getT("portal.navGroups")]);
-  // Notices from the last 7 days → bell badge. log_activity() records today's visit → study streak.
+  // Notices from the last 7 days → bell badge. get_my_paper_stats() → performance streaks for the sidebar card.
   const since = new Date(Date.now() - 7 * 86400000).toISOString();
   const [{ count }, activity] = await Promise.all([
     supabase.from("notices").select("id", { count: "exact", head: true }).gte("created_at", since),
-    supabase.rpc("log_activity"),
+    supabase.rpc("get_my_paper_stats"),
   ]);
-  const streak = (activity.error ? null : activity.data) as Streak | null;
+  const streak = activity.error || !activity.data ? null : normalizeStreaks(activity.data as PaperStats);
 
   const groups: ShellGroup[] = [
     { label: tg("learn"), items: [

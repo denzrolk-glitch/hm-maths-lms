@@ -153,6 +153,7 @@
     "title": "Something went wrong",
     "text": "An unexpected error occurred. Please try again.",
     "retry": "Try again",
+    "home": "Go to home page",
     "reference": "Error reference: {digest}"
   },
   "accountIssue": {

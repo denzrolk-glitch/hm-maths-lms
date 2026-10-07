@@ -10,6 +10,7 @@ import { PasswordInput } from "@/components/password-input";
 import { useT } from "@/i18n/client";
 import { SITE } from "@/content/site";
 import { whatsappLink } from "@/lib/utils";
+import { WhatsAppIcon } from "@/components/brand-icons";
 
 export function LoginForm({ next }: { next?: string }) {
   const t = useT("auth.login");
@@ -31,8 +32,8 @@ export function LoginForm({ next }: { next?: string }) {
         {forgot ? (
           <Alert>
             {t("forgotHint")}{" "}
-            <a className="font-semibold underline" target="_blank" rel="noopener noreferrer"
-              href={whatsappLink(SITE.contact.whatsapp, t("forgotText")) ?? "#"}>WhatsApp</a>
+            <a className="inline-flex items-center gap-1 font-semibold underline" target="_blank" rel="noopener noreferrer"
+              href={whatsappLink(SITE.contact.whatsapp, t("forgotText")) ?? "#"}><WhatsAppIcon /> WhatsApp</a>
           </Alert>
         ) : null}
         <SubmitButton className="h-12 w-full rounded-xl text-base" pendingText={t("pending")}>{t("submit")}</SubmitButton>

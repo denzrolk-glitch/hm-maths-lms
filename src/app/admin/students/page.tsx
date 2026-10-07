@@ -1,4 +1,5 @@
-import { MessageCircle, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { WhatsAppIcon } from "@/components/brand-icons";
 import { requireAdmin } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -50,7 +51,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
                 <td className="text-xs text-muted-foreground">{f.date(p.created_at)}</td>
                 <td>
                   <div className="flex items-center justify-end gap-1">
-                    {wa && <a href={wa} target="_blank" rel="noreferrer" aria-label={t("whatsapp")} className={buttonVariants({ variant: "ghost", size: "icon", className: "text-success" })}><MessageCircle /></a>}
+                    {wa && <a href={wa} target="_blank" rel="noreferrer" aria-label={t("whatsapp")} className={buttonVariants({ variant: "ghost", size: "icon", className: "" })}><WhatsAppIcon className="h-5 w-5" /></a>}
                     {p.id !== user.id && <ResetPasswordButton id={p.id} name={p.full_name} />}
                     {p.id !== user.id && <RoleButton id={p.id} role={p.role} />}
                   </div>

@@ -3,6 +3,8 @@ import { Facebook, Instagram, Mail, MapPin, Music2, Phone, Youtube } from "lucid
 import { LogoMark } from "@/components/logo";
 import { getT } from "@/i18n/server";
 import { SITE } from "@/content/site";
+import { WhatsAppIcon } from "@/components/brand-icons";
+import { whatsappLink } from "@/lib/utils";
 
 export async function LandingFooter() {
   const t = await getT("landing");
@@ -33,6 +35,9 @@ export async function LandingFooter() {
             <li className="flex gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" />{SITE.contact.address}</li>
             <li className="flex gap-2"><Mail className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" /><a href={`mailto:${SITE.contact.email}`} className="hover:text-white">{SITE.contact.email}</a></li>
             <li className="flex gap-2"><Phone className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" /><a href={`tel:${SITE.contact.phone.replace(/\s/g, "")}`} className="hover:text-white">{SITE.contact.phone}</a></li>
+            {whatsappLink(SITE.contact.whatsapp, "Hi") ? (
+              <li className="flex gap-2"><WhatsAppIcon className="mt-0.5 h-4 w-4" /><a href={whatsappLink(SITE.contact.whatsapp, "Hi")!} target="_blank" rel="noopener noreferrer" className="hover:text-white">WhatsApp</a></li>
+            ) : null}
           </ul>
         </div>
         <div>

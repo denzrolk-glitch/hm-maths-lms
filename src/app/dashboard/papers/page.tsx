@@ -8,8 +8,8 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion";
 import { DateTile } from "@/components/date-tile";
 import { ResultsChart } from "@/components/portal/charts";
 import { Achievements, RankTile, ScoreRing, StreakPanel } from "@/components/portal/progress-widgets";
-import { achievements, grade, pct } from "@/lib/papers";
-import { getMyPapers, getPaperStats, getStudyStreak } from "@/lib/paper-data";
+import { achievements, grade, normalizeStreaks, pct } from "@/lib/papers";
+import { getMyPapers, getPaperStats } from "@/lib/paper-data";
 import { getFormat, getT } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
@@ -22,8 +22,8 @@ const file = (p: string | null) => (p ? `/api/files/papers?path=${encodeURICompo
 export default async function MyPapersPage() {
   const { supabase, user, profile } = await requireUser();
   const [t, tc, f] = await Promise.all([getT("portal.papers"), getT("common"), getFormat()]);
-  const [stats, study, papers] = await Promise.all([
-    getPaperStats(supabase), getStudyStreak(supabase), getMyPapers(supabase, user.id, profile.al_year ?? null),
+  const [stats, papers] = await Promise.all([
+    getPaperStats(supabase), getMyPapers(supabase, user.id, profile.al_year ?? null),
   ]);
   const last = stats?.last ?? null;
   const sat = papers.filter((p) => p.mine).slice(0, 10).reverse();
@@ -36,7 +36,7 @@ export default async function MyPapersPage() {
         <Link href="/dashboard/leaderboard" className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/25 transition hover:-translate-y-px"><Trophy className="h-4 w-4" /> {t("openLeaderboard")}</Link>
       </PageHeader>
 
-      <Reveal><StreakPanel paper={{ current: stats?.streak ?? 0, best: stats?.best_streak ?? 0 }} study={study} /></Reveal>
+      <Reveal><div id="streaks" className="scroll-mt-24"><StreakPanel streaks={normalizeStreaks(stats)} /></div></Reveal>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_1fr]">
         <Reveal delay={0.05}>
@@ -86,7 +86,7 @@ export default async function MyPapersPage() {
         </Card>
         <Card>
           <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Award className="h-4 w-4 text-primary" /> {t("achievements")}</CardTitle></CardHeader>
-          <CardContent><Achievements items={achievements(stats, study)} /></CardContent>
+          <CardContent><Achievements items={achievements(stats)} /></CardContent>
         </Card>
       </div>
 

@@ -4,15 +4,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Bell, BookOpen, ChevronRight, ClipboardList, CreditCard, FileText, Flame, GraduationCap, Home, LayoutDashboard,
+  Bell, BookOpen, ChevronDown, ChevronRight, ClipboardList, CreditCard, FileText, Flame, GraduationCap, Home, LayoutDashboard,
   LogOut, Megaphone, Menu, Moon, Package, PlayCircle, ShoppingBag, Sun, Trophy, User, Users, X, type LucideIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { LogoMark } from "@/components/logo";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { logoutAction } from "@/app/auth-actions";
 import { useT } from "@/i18n/client";
 import { cn, initials } from "@/lib/utils";
+import { STREAK_KEYS, hottestStreak, type Streaks } from "@/lib/papers";
+import { STREAK_META } from "@/components/portal/progress-widgets";
 
 const ICONS = {
   dashboard: LayoutDashboard, classes: BookOpen, free: PlayCircle, exams: ClipboardList, papers: FileText, trophy: Trophy,
@@ -23,7 +24,7 @@ export type IconKey = keyof typeof ICONS;
 
 export type ShellItem = { href: string; label: string; icon: IconKey; badge?: number; exact?: boolean };
 export type ShellGroup = { label: string; items: ShellItem[] };
-export type Streak = { current: number; best: number; week: boolean[] };
+export type Streak = Streaks;
 
 const isId = (s: string) => /^[0-9a-f-]{20,}$/i.test(s);
 
@@ -96,21 +97,38 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
     </nav>
   );
 
-  const StreakCard = () => streak ? (
-    <Link href="/dashboard/papers" className="group relative block overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 via-teal-500 to-brand-500 p-4 text-white shadow-lg shadow-teal-600/25">
-      <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/15 blur-xl transition group-hover:scale-125" />
-      <div className="relative flex items-center gap-3">
-        <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/20"><Flame className={cn("h-5 w-5", streak.current > 0 && "animate-flicker text-amber-200")} /></span>
-        <div>
-          <p className="font-display text-xl font-bold leading-none">{ts("days", { n: streak.current })}</p>
-          <p className="mt-1 text-[11px] text-white/80">{ts("label")}</p>
+  const StreakCard = () => {
+    if (!streak) return null;
+    const hot = hottestStreak(streak);
+    const Icon = hot ? STREAK_META[hot.key].icon : Flame;
+    return (
+      <Link href="/dashboard/papers#streaks" className={cn("group relative block overflow-hidden rounded-2xl p-3 text-white shadow-lg transition hover:-translate-y-0.5",
+        hot ? cn("bg-gradient-to-br", STREAK_META[hot.key].tone) : "bg-gradient-to-br from-[#1d1a17] to-[#0b0b0b]")}>
+        <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/15 blur-xl transition group-hover:scale-125" />
+        <div className="relative flex items-center gap-2.5">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/20"><Icon className={cn("h-[18px] w-[18px]", hot && "animate-flicker")} /></span>
+          <div className="min-w-0">
+            <p className="truncate font-display text-[15px] font-bold leading-tight">
+              {hot ? `${ts(`types.${hot.key}.name`)} · ${hot.value.current}` : ts("none")}
+            </p>
+            <p className="truncate text-[11px] text-white/80">{hot ? ts("papersRow", { n: hot.value.current }) : ts("noneSub")}</p>
+          </div>
         </div>
-      </div>
-      <div className="relative mt-3 flex justify-between gap-1">
-        {streak.week.map((on, i) => <span key={i} className={cn("h-1.5 flex-1 rounded-full", on ? "bg-white" : "bg-white/25")} />)}
-      </div>
-    </Link>
-  ) : null;
+        <div className="relative mt-2.5 flex gap-1">
+          {STREAK_KEYS.map((k) => {
+            const KIcon = STREAK_META[k].icon;
+            const v = streak[k].current;
+            return (
+              <span key={k} title={`${ts(`types.${k}.name`)}: ${v}`}
+                className={cn("flex h-6 flex-1 items-center justify-center gap-0.5 rounded-md text-[10px] font-bold", v > 0 ? "bg-white/25" : "bg-black/15 text-white/45")}>
+                <KIcon className="h-3 w-3" />{v}
+              </span>
+            );
+          })}
+        </div>
+      </Link>
+    );
+  };
 
   const tabItems = tabs.map((h) => all.find((i) => i.href === h)).filter(Boolean) as ShellItem[];
 
@@ -126,7 +144,7 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
               <span className="block text-[11px] font-medium text-muted-foreground">{area === "admin" ? tc("shell.adminConsole") : tc("brand.sub")}</span>
             </span>
           </Link>
-          <div className="scrollbar-none mt-4 flex-1 overflow-y-auto px-3"><Nav layout="side" /></div>
+          <ScrollFade className="mt-4"><Nav layout="side" /></ScrollFade>
           <div className="space-y-3 pt-3">
             <StreakCard />
             <div className="flex items-center gap-3 rounded-2xl bg-muted/60 p-2.5">
@@ -135,7 +153,7 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
                 <p className="truncate text-sm font-semibold">{user.name}</p>
                 <p className="truncate font-mono text-[11px] text-muted-foreground">{user.subtitle}</p>
               </div>
-              <form action={logoutAction}>
+              <form action="/auth/logout" method="post">
                 <button type="submit" aria-label={tc("actions.logout")} className="grid h-8 w-8 place-items-center rounded-lg text-muted-foreground transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40">
                   <LogOut className="h-4 w-4" />
                 </button>
@@ -204,7 +222,7 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
                       <Link href="/" className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-accent hover:text-foreground">
                         <Home className="h-4 w-4 text-muted-foreground" /> {tc("shell.backToSite")}
                       </Link>
-                      <form action={logoutAction}>
+                      <form action="/auth/logout" method="post">
                         <button type="submit" className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30">
                           <LogOut className="h-4 w-4" /> {tc("actions.logout")}
                         </button>
@@ -260,12 +278,12 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
                 <Link href={home} className="flex items-center gap-2.5"><LogoMark tone="tile" /><span className="font-display font-bold">{tc("brand.short")}</span></Link>
                 <button type="button" aria-label={tc("shell.closeMenu")} onClick={() => setDrawer(false)} className="grid h-10 w-10 place-items-center rounded-xl hover:bg-accent"><X className="h-5 w-5" /></button>
               </div>
-              <div className="flex-1 overflow-y-auto px-3"><Nav layout="drawer" /></div>
+              <ScrollFade><Nav layout="drawer" /></ScrollFade>
               <div className="mt-4 space-y-3 border-t pt-4">
                 <StreakCard />
                 <div className="flex items-center justify-between">
                   <LanguageSwitcher />
-                  <form action={logoutAction}>
+                  <form action="/auth/logout" method="post">
                     <button type="submit" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"><LogOut className="h-4 w-4" /> {tc("actions.logout")}</button>
                   </form>
                 </div>
@@ -294,3 +312,34 @@ function ThemeButton({ label }: { label: string }) {
     </button>
   );
 }
+
+/** Scrollable column with fade edges + a bouncing "more below" button, so it's obvious the list scrolls. */
+function ScrollFade({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ up: false, down: false });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setEdges({ up: el.scrollTop > 4, down: el.scrollTop + el.clientHeight < el.scrollHeight - 4 });
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
+    return () => { el.removeEventListener("scroll", update); ro.disconnect(); };
+  }, []);
+  return (
+    <div className={cn("relative min-h-0 flex-1", className)}>
+      <div ref={ref} className="scrollbar-thin h-full overflow-y-auto overscroll-contain px-3 pb-2">{children}</div>
+      <div aria-hidden className={cn("pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-card to-transparent transition-opacity", edges.up ? "opacity-100" : "opacity-0")} />
+      <div aria-hidden className={cn("pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card via-card/80 to-transparent transition-opacity", edges.down ? "opacity-100" : "opacity-0")} />
+      <button type="button" aria-label="Scroll down" tabIndex={-1}
+        onClick={() => ref.current?.scrollBy({ top: ref.current.clientHeight * 0.7, behavior: "smooth" })}
+        className={cn("absolute bottom-1 left-1/2 grid h-7 w-7 -translate-x-1/2 place-items-center rounded-full border border-border bg-card text-primary shadow-md transition",
+          edges.down ? "animate-bounce opacity-100" : "pointer-events-none opacity-0")}>
+        <ChevronDown className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
