@@ -111,8 +111,16 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error || !data.user) return { error: t("badCredentials") };
+  let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  // Copy-pasted passwords often carry stray spaces: retry once with the trimmed value.
+  if (error && password.trim() !== password && password.trim()) {
+    ({ data, error } = await supabase.auth.signInWithPassword({ email, password: password.trim() }));
+  }
+  if (error || !data.user) {
+    const invalid = error?.code === "invalid_credentials" || /invalid login credentials/i.test(error?.message ?? "");
+    if (error && !invalid) console.error("[login] Supabase auth error:", error.status, error.code, error.message);
+    return { error: invalid || !error ? t("badCredentials") : t("serviceError") };
+  }
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : null;

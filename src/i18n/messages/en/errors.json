@@ -26,6 +26,7 @@
     "missingCredentials": "Enter your mobile number and password.",
     "badIdentifier": "Enter a valid mobile number (07XXXXXXXX) or admin e-mail.",
     "badCredentials": "Incorrect mobile number or password.",
+    "serviceError": "Sign-in service error. Please try again in a minute — if it keeps happening, contact the admin.",
     "address": "Enter your full delivery address (at least 8 characters).",
     "city": "Enter your city or town.",
     "postal": "Postal code must be 5 digits."
