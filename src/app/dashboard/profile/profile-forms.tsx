@@ -49,9 +49,9 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <Field label={t("town")} htmlFor="town">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {TOWNS.map((x) => (
-              <label key={x} className="cursor-pointer">
+              <label key={x} className="flex cursor-pointer">
                 <input type="radio" name="town" value={x} defaultChecked={profile.town === x} className="peer sr-only" />
-                <span className="flex h-10 items-center justify-center rounded-lg border px-2 text-center text-sm font-medium transition hover:border-teal-500/50 peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:text-teal-700 peer-focus-visible:ring-2 peer-focus-visible:ring-ring dark:peer-checked:bg-teal-500/10 dark:peer-checked:text-teal-300">
+                <span className="flex min-h-10 w-full items-center justify-center rounded-lg border px-2 py-1.5 text-center text-sm leading-snug font-medium transition hover:border-teal-500/50 peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:text-teal-700 peer-focus-visible:ring-2 peer-focus-visible:ring-ring dark:peer-checked:bg-teal-500/10 dark:peer-checked:text-teal-300">
                   {tc(`towns.${x}`)}
                 </span>
               </label>

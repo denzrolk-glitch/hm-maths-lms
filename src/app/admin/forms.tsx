@@ -168,7 +168,7 @@ export function LessonForm({ classId, lesson, liveUrl, defaults, defaultType = "
         {(["regular", "extra"] as const).map((v) => (
           <label key={v} className="cursor-pointer">
             <input type="radio" name="session_type" value={v} checked={type === v} onChange={() => setType(v)} className="peer sr-only" />
-            <span className="flex h-9 items-center justify-center rounded-lg text-sm font-semibold text-muted-foreground transition peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-ring">
+            <span className="flex min-h-9 items-center justify-center rounded-lg px-2 py-1.5 text-center text-sm leading-snug font-semibold text-muted-foreground transition peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-ring">
               {tc(`schedule.types.${v}`)}
             </span>
           </label>

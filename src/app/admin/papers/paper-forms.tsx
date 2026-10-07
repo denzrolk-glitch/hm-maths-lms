@@ -32,11 +32,11 @@ export function PaperForm({ paper, newId, classes, today }: {
         <Input id={`title-${id}`} name="title" defaultValue={paper?.title} placeholder={t("titlePlaceholder")} required minLength={2} maxLength={160} className="h-11" />
       </Field>
       <Field label={t("type")}>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2">
           {PAPER_TYPES.map((x) => (
-            <label key={x} className="cursor-pointer">
+            <label key={x} className="flex cursor-pointer">
               <input type="radio" name="paper_type" value={x} checked={type === x} onChange={() => setType(x)} className="peer sr-only" />
-              <span className="flex h-10 items-center justify-center rounded-xl border text-sm font-medium transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring">
+              <span className="flex min-h-11 w-full items-center justify-center rounded-xl border px-3 py-2 text-center text-sm font-medium leading-snug transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring">
                 {tp(x)}
               </span>
             </label>
