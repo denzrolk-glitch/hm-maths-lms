@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/db/client";
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/i18n/client";

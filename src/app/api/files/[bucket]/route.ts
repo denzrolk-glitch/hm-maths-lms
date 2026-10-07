@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/db/server";
 
 const ALLOWED = new Set(["tute-pdfs", "bank-slips", "answer-sheets", "papers"]);
 
@@ -14,10 +14,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ buck
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)}`, req.url));
+  if (!user) return new NextResponse(null, { status: 307, headers: { Location: `/login?next=${encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)}` } });
 
   const download = req.nextUrl.searchParams.get("download") === "1";
   const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 120, download ? { download: true } : undefined);
   if (error || !data) return NextResponse.json({ error: "File not found or access denied" }, { status: 403 });
-  return NextResponse.redirect(data.signedUrl, { headers: { "Cache-Control": "no-store" } });
+  return new NextResponse(null, { status: 307, headers: { Location: data.signedUrl, "Cache-Control": "no-store" } });
 }

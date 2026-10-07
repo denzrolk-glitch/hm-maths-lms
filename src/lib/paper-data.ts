@@ -1,5 +1,5 @@
 import "server-only";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DbClient as SupabaseClient } from "@/lib/db/types";
 import type { OverallLeaderRow, Paper, PaperLeaderRow, PaperStats } from "./papers";
 
 const num = <T extends object>(r: T, keys: (keyof T)[]): T => {

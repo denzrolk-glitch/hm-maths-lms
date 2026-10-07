@@ -6,7 +6,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
  * HMAC of (answer, expiry, nonce) signed with a server secret. Expires after 10 minutes.
  */
 const TTL_MS = 10 * 60 * 1000;
-const secret = () => process.env.CAPTCHA_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || "hm-maths-dev-secret";
+const secret = () => process.env.CAPTCHA_SECRET || process.env.JWT_SECRET || "hm-maths-dev-secret";
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
 const rnd = (min: number, max: number) => min + (randomBytes(1)[0]! % (max - min + 1));
 

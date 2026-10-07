@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomInt } from "node:crypto";
 import { requireAdmin } from "@/lib/auth";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/db/admin";
 import { CLASS_TYPES, NOTICE_TAGS, TOWNS } from "@/lib/constants";
 import type { ActionState } from "@/lib/types";
 import { colomboLocalToISO, currentMonth, normalizeMobile } from "@/lib/utils";

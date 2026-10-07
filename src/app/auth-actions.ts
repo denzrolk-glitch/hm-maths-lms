@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/db/server";
+import { createAdminClient } from "@/lib/db/admin";
 import { AL_YEARS, TOWNS } from "@/lib/constants";
 import { createCaptcha, verifyCaptcha } from "@/lib/captcha";
 import type { ActionState } from "@/lib/types";

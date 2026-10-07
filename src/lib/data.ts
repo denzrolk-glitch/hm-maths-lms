@@ -1,5 +1,5 @@
 import "server-only";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DbClient as SupabaseClient } from "@/lib/db/types";
 import type { ClassRow, Enrollment, Lesson, Notice } from "@/lib/types";
 import { LIVE_DURATION_MINUTES, LIVE_GRACE_MINUTES, LIVE_UNLOCK_MINUTES } from "@/lib/constants";
 
