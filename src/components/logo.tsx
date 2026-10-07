@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** "hm" monoline ligature mark in the blue brand gradient (or `currentColor` with tone="current"). */
+/** "hm" monoline ligature mark in the HM orange gradient; tone="tile" = black tile with the orange mark (or `currentColor` with tone="current"). */
 export function LogoMark({ className, tone = "brand" }: { className?: string; tone?: "brand" | "current" | "tile" }) {
   if (tone === "tile") {
     return (
-      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-teal-500 to-brand-500 text-white shadow-lg shadow-teal-500/30", className)} aria-hidden>
-        <LogoMark tone="current" className="h-[62%] w-[62%]" />
+      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0b0b0b] shadow-lg shadow-black/30 ring-1 ring-white/10", className)} aria-hidden>
+        <LogoMark tone="brand" className="h-[64%] w-[64%] drop-shadow-[0_0_8px_rgba(240,91,6,.45)]" />
       </span>
     );
   }
