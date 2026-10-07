@@ -154,7 +154,8 @@
     "text": "An unexpected error occurred. Please try again.",
     "retry": "Try again",
     "home": "Go to home page",
-    "reference": "Error reference: {digest}"
+    "reference": "Error reference: {digest}",
+    "stale": "This page was out of date or your sign-in expired. Reloading — please try again."
   },
   "accountIssue": {
     "title": "We couldn't load your profile",

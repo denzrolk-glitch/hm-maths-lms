@@ -6,7 +6,9 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
 /** Signs the user out and sends them to the home page with a plain 303 redirect
  *  (a full page load, so no dashboard state or server-action rendering is involved). */
 async function logout(request: NextRequest) {
-  const response = NextResponse.redirect(new URL("/", request.url), { status: 303 });
+  // Relative Location: on Netlify request.url carries the internal deploy host
+  // (<id>--site.netlify.app), which would move the user off the main domain.
+  const response = new NextResponse(null, { status: 303, headers: { Location: "/" } });
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll: () => request.cookies.getAll(),

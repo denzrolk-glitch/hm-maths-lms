@@ -1,9 +1,10 @@
 "use client";
-import { useActionState, useEffect, useRef, startTransition } from "react";
+import { useActionState, useCallback, useEffect, useRef, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/types";
 import { PendingContext } from "@/components/ui/submit-button";
+import { useT } from "@/i18n/client";
 
 type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
@@ -26,7 +27,23 @@ export function ActionForm({
   onError?: (state: ActionState) => void;
   id?: string;
 }) {
-  const [state, dispatch, pending] = useActionState(action, null);
+  const te = useT("common.error");
+  // A deploy (new server-action IDs) or an expired session makes the server answer with a
+  // non-RSC response (e.g. 401/404) and React throws "An unexpected response was received".
+  // Instead of crashing to the error page, tell the user and reload to pick up a fresh page.
+  const run = useCallback(async (prev: ActionState, fd: FormData): Promise<ActionState> => {
+    try {
+      return await action(prev, fd);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (/unexpected response|failed to fetch|server action|load failed|networkerror/i.test(msg)) {
+        setTimeout(() => window.location.reload(), 2500);
+        return { error: te("stale") };
+      }
+      throw e; // includes NEXT_REDIRECT / NEXT_NOT_FOUND, which the router handles
+    }
+  }, [action, te]);
+  const [state, dispatch, pending] = useActionState(run, null);
   const ref = useRef<HTMLFormElement>(null);
   const router = useRouter();
 
