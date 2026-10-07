@@ -1,18 +1,13 @@
 import { DashboardShell, type ShellGroup, type ShellItem } from "@/components/dashboard-shell";
-import { normalizeStreaks, type PaperStats } from "@/lib/papers";
 import { requireUser } from "@/lib/auth";
 import { getT } from "@/i18n/server";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { supabase, profile } = await requireUser();
   const [t, tg] = await Promise.all([getT("portal.nav"), getT("portal.navGroups")]);
-  // Notices from the last 7 days → bell badge. get_my_paper_stats() → performance streaks for the sidebar card.
+  // Notices from the last 7 days → bell badge.
   const since = new Date(Date.now() - 7 * 86400000).toISOString();
-  const [{ count }, activity] = await Promise.all([
-    supabase.from("notices").select("id", { count: "exact", head: true }).gte("created_at", since),
-    supabase.rpc("get_my_paper_stats"),
-  ]);
-  const streak = activity.error || !activity.data ? null : normalizeStreaks(activity.data as PaperStats);
+  const { count } = await supabase.from("notices").select("id", { count: "exact", head: true }).gte("created_at", since);
 
   const groups: ShellGroup[] = [
     { label: tg("learn"), items: [
@@ -41,7 +36,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <DashboardShell area="student" groups={groups} menu={menu} crumbNs="portal.crumbs"
       tabs={["/dashboard", "/dashboard/classes", "/dashboard/papers", "/dashboard/leaderboard"]}
       user={{ name: profile.full_name, subtitle: profile.student_id ?? t("admin") }}
-      notices={{ href: "/dashboard/notices", count: count ?? 0 }} streak={streak}>
+      notices={{ href: "/dashboard/notices", count: count ?? 0 }}>
       {children}
     </DashboardShell>
   );

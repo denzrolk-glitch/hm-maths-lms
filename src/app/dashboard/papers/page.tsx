@@ -36,8 +36,6 @@ export default async function MyPapersPage() {
         <Link href="/dashboard/leaderboard" className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/25 transition hover:-translate-y-px"><Trophy className="h-4 w-4" /> {t("openLeaderboard")}</Link>
       </PageHeader>
 
-      <Reveal><div id="streaks" className="scroll-mt-24"><StreakPanel streaks={normalizeStreaks(stats)} /></div></Reveal>
-
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_1fr]">
         <Reveal delay={0.05}>
           <Card className="h-full overflow-hidden">
@@ -127,6 +125,8 @@ export default async function MyPapersPage() {
           <EmptyState icon={FileText} title={t("emptyTitle")} description={t("emptyText")} />
         )}
       </section>
+
+      <Reveal><div id="streaks" className="scroll-mt-24"><StreakPanel streaks={normalizeStreaks(stats)} /></div></Reveal>
     </div>
   );
 }
