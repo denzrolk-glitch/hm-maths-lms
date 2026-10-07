@@ -23,7 +23,7 @@ export function SplitReveal({ text, className, wordClassName, delay = 0, by = "w
     <MotionTag ref={ref as never} className={cn("inline", className)} aria-label={text}>
       {words.map((w, wi) => (
         <span key={wi} aria-hidden className="inline-block whitespace-nowrap align-bottom" style={{ overflow: "clip", overflowClipMargin: "0.2em" }}>
-          {(by === "char" ? [...w] : [w]).map((c, ci) => {
+          {(by === "char" && /^[\x20-\x7E]+$/.test(w) ? [...w] : [w]).map((c, ci) => {
             const d = delay + step * i++;
             return (
               <motion.span key={ci} className={cn("inline-block pb-[0.16em] will-change-transform", wordClassName)}
@@ -69,7 +69,7 @@ export function TiltCard({ children, className, max = 10, glare = true }: { chil
   const ry = useSpring(useTransform(px, [0, 1], [-max, max]), { stiffness: 180, damping: 18 });
   const gx = useTransform(px, (v) => `${v * 100}%`);
   const gy = useTransform(py, (v) => `${v * 100}%`);
-  const bg = useMotionTemplate`radial-gradient(420px circle at ${gx} ${gy}, rgba(56,151,245,.16), transparent 45%)`;
+  const bg = useMotionTemplate`radial-gradient(420px circle at ${gx} ${gy}, rgba(240,91,6,.14), transparent 45%)`;
   return (
     <motion.div ref={ref} style={{ rotateX: rx, rotateY: ry, transformPerspective: 1000 }} className={cn("group relative [transform-style:preserve-3d]", className)}
       onPointerMove={(e) => {

@@ -13,7 +13,7 @@ export function MarqueeBand() {
         <VelocityMarquee baseVelocity={-1.6}>
           {a.map((w, i) => (
             <span key={i} className="flex items-center gap-6 pr-6 font-display text-2xl font-extrabold uppercase tracking-tight text-white sm:text-4xl">
-              {w}<span className="text-brand-200">✦</span>
+              {w}<span aria-hidden className="inline-block h-2.5 w-2.5 rotate-45 rounded-[2px] bg-brand-200" />
             </span>
           ))}
         </VelocityMarquee>

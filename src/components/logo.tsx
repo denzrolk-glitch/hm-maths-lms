@@ -16,12 +16,12 @@ export function LogoMark({ className, tone = "brand" }: { className?: string; to
     <svg viewBox="0 0 48 48" className={cn("h-9 w-9", className)} aria-hidden>
       {tone === "brand" && (
         <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#14b0e6" /></linearGradient>
+          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f05b06" /><stop offset="1" stopColor="#fb923c" /></linearGradient>
         </defs>
       )}
       <path d="M8 6v36M8 26c0-6 3.6-9.5 8-9.5s8 3.5 8 9.5v16M24 26c0-6 3.6-9.5 8-9.5s8 3.5 8 9.5v16"
         fill="none" stroke={stroke} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="40" cy="7" r="3.5" fill={tone === "brand" ? "#14b0e6" : "currentColor"} />
+      <circle cx="40" cy="7" r="3.5" fill={tone === "brand" ? "#fb923c" : "currentColor"} />
     </svg>
   );
 }

@@ -10,6 +10,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", "var(--font-sinhala)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "var(--font-sinhala)", "var(--font-sans)", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "var(--font-sinhala)", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -26,18 +27,20 @@ export default {
         accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
         card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
         popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
-        // Accent: bright sky / cyan
+        // Brand accent: HM orange
         brand: {
-          50: "#ecfbff", 100: "#d5f4fe", 200: "#b4ecfd", 300: "#7fdffb", 400: "#41c9f5",
-          500: "#14b0e6", 600: "#068dc4", 700: "#08709e", 800: "#0e5d82", 900: "#114e6c", 950: "#0a3148",
+          50: "#fff4ec", 100: "#ffe5d2", 200: "#ffc6a1", 300: "#ff9f66", 400: "#fb7a2e",
+          500: "#f05b06", 600: "#d14b03", 700: "#ad3b06", 800: "#8a300c", 900: "#71290e", 950: "#3d1203",
         },
         sand: { 100: "#efe4d9", 300: "#cdbfb3", 500: "#b5a69c" },
-        // Primary scale (azure blue). Kept under the old "teal" name so every existing screen follows the new palette.
-        teal: {
-          50: "#eff7ff", 100: "#dbeefe", 200: "#bfe2fe", 300: "#93cffd", 400: "#5fb4fa",
-          500: "#3897f5", 600: "#1f7ae8", 700: "#1963d4", 800: "#1b51ab", 900: "#1c4687", 950: "#152c55",
+        // Primary scale (HM orange), driven by CSS variables in globals.css. Kept under the old "teal" name.
+        teal: Object.fromEntries([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((k) => [k, `rgb(var(--teal-${k}) / <alpha-value>)`])),
+        // Neutral greys (no blue cast)
+        slate: {
+          50: "#fafaf9", 100: "#f5f5f4", 200: "#e7e5e4", 300: "#d6d3d1", 400: "#a8a29e", 500: "#78716c",
+          600: "#57534e", 700: "#44403c", 800: "#292524", 900: "#1a1715", 950: "#0c0a09",
         },
-        ink: { DEFAULT: "#0b1530", 900: "#0e1a3a", 800: "#13224a", 700: "#1a2c5c", 600: "#22386f" },
+        ink: { DEFAULT: "#0b0b0b", 900: "#0b0b0b", 800: "#121110", 700: "#1a1410", 600: "#241c16" },
         portal: { head: "hsl(var(--portal-head))", bg: "hsl(var(--background))" },
       },
       borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },
@@ -64,8 +67,8 @@ export default {
         blob: "blob 18s ease-in-out infinite",
       },
       boxShadow: {
-        soft: "0 1px 2px rgba(16,42,90,.04), 0 8px 24px -12px rgba(16,42,90,.12)",
-        lift: "0 2px 4px rgba(16,42,90,.04), 0 18px 40px -18px rgba(23,92,211,.35)",
+        soft: "0 1px 2px rgba(20,14,10,.05), 0 8px 24px -12px rgba(20,14,10,.16)",
+        lift: "0 2px 4px rgba(20,14,10,.05), 0 18px 40px -18px rgba(20,14,10,.45)",
       },
     },
   },

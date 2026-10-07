@@ -11,8 +11,8 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   const t = await getT("auth.side");
   const img = publicImage(SITE.authImage);
   return (
-    <div className="grid grid-cols-1 min-h-dvh bg-mesh bg-background lg:grid-cols-[1.15fr_1fr]">
-      <aside className="relative hidden m-3 overflow-hidden rounded-[32px] bg-gradient-to-br from-teal-700 via-teal-600 to-brand-500 shadow-lift lg:block">
+    <div className="theme-orange grid grid-cols-1 min-h-dvh bg-mesh bg-background lg:grid-cols-[1.15fr_1fr]">
+      <aside className="relative hidden m-3 overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0b0b0b] via-[#1d1a17] to-[#3b1d0b] shadow-lift lg:block">
         {img ? (
           <Image src={img} alt={t("imageAlt")} fill priority sizes="55vw" className="object-cover" />
         ) : (

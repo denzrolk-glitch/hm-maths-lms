@@ -25,7 +25,7 @@ export function ScoreRing({ value, size = 132, stroke = 12, label, sub }: { valu
           strokeDasharray={c} initial={{ strokeDashoffset: c }} whileInView={{ strokeDashoffset: c - (c * v) / 100 }} viewport={{ once: true }}
           transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }} />
         <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#41c9f5" /></linearGradient>
+          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#d14b03" /><stop offset="1" stopColor="#fb923c" /></linearGradient>
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
@@ -96,7 +96,7 @@ const BADGE_ICONS: Record<BadgeKey, { icon: LucideIcon; tone: string }> = {
   score90: { icon: Star, tone: "from-yellow-300 to-amber-500" },
   fullMarks: { icon: Target, tone: "from-emerald-400 to-emerald-600" },
   top10: { icon: Medal, tone: "from-brand-400 to-teal-600" },
-  townChampion: { icon: MapPin, tone: "from-sky-400 to-indigo-500" },
+  townChampion: { icon: MapPin, tone: "from-emerald-400 to-teal-600" },
   champion: { icon: Crown, tone: "from-amber-300 to-yellow-500" },
   papers10: { icon: BookOpenCheck, tone: "from-violet-400 to-indigo-600" },
   study7: { icon: Award, tone: "from-rose-400 to-pink-600" },

@@ -6,7 +6,7 @@ import { useT } from "@/i18n/client";
 import { SectionTitle } from "./section-title";
 
 const ICONS: Record<string, LucideIcon> = { spark: Sparkles, map: MapPinned, video: Video, paper: FileCheck2, trophy: Trophy };
-const TONES = ["from-teal-500 to-brand-500", "from-sky-400 to-indigo-500", "from-violet-500 to-fuchsia-500", "from-amber-400 to-orange-500", "from-emerald-400 to-teal-600"];
+const TONES = ["from-teal-500 to-brand-500", "from-emerald-400 to-teal-600", "from-violet-500 to-fuchsia-500", "from-amber-400 to-orange-500", "from-emerald-400 to-teal-600"];
 type Milestone = { icon: string; title: string; text: string };
 
 /** Pinned section: vertical scroll drives a horizontal journey of milestone cards. */

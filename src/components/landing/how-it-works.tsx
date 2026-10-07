@@ -44,7 +44,7 @@ export function HowItWorks() {
           <div className="sticky top-[18vh] mx-auto w-[300px]">
             <div className="relative rounded-[44px] border-[10px] border-ink bg-ink p-0 shadow-[0_50px_100px_-30px_rgba(11,21,48,.55)] dark:border-slate-700">
               <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-ink dark:bg-slate-700" />
-              <div className="relative h-[560px] overflow-hidden rounded-[34px] bg-gradient-to-b from-[#f3f9ff] to-white p-4 pt-10 dark:from-slate-900 dark:to-slate-950">
+              <div className="relative h-[560px] overflow-hidden rounded-[34px] bg-gradient-to-b from-[#fff7f0] to-white p-4 pt-10 dark:from-slate-900 dark:to-slate-950">
                 <AnimatePresence mode="wait">
                   <motion.div key={active} initial={{ opacity: 0, y: 30, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -30, scale: 0.96 }} transition={{ duration: 0.5, ease: EASE }}>
                     {active === 0 ? <ScreenPaper t={t} /> : active === 1 ? <ScreenResult t={t} /> : <ScreenBoard t={t} />}
@@ -86,7 +86,7 @@ function ScreenResult({ t }: { t: TT }) {
         <svg viewBox="0 0 140 140" className="-rotate-90">
           <circle cx="70" cy="70" r={r} fill="none" strokeWidth="12" className="stroke-teal-100 dark:stroke-white/10" />
           <motion.circle cx="70" cy="70" r={r} fill="none" strokeWidth="12" strokeLinecap="round" stroke="url(#howRing)" strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * 0.08 }} transition={{ duration: 1.4, ease: EASE }} />
-          <defs><linearGradient id="howRing" x1="0" x2="1"><stop offset="0" stopColor="#1f7ae8" /><stop offset="1" stopColor="#41c9f5" /></linearGradient></defs>
+          <defs><linearGradient id="howRing" x1="0" x2="1"><stop offset="0" stopColor="#f05b06" /><stop offset="1" stopColor="#fbbf24" /></linearGradient></defs>
         </svg>
         <span className="absolute inset-0 grid place-items-center font-display text-4xl font-extrabold text-ink dark:text-white">92%</span>
       </div>

@@ -16,9 +16,9 @@ export default async function PublicStorePage() {
     supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }),
   ]);
   return (
-    <div className="min-h-dvh bg-gradient-to-b from-[#f3f9ff] to-white dark:from-[#060b1a] dark:to-[#070d1f]">
+    <div className="dark theme-orange min-h-dvh bg-[#050505] text-white">
       <LandingNav account={!user ? "guest" : profile?.role === "admin" ? "admin" : "student"} />
-      <div className="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-600 to-brand-500 pb-32 pt-36 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#0b0b0b] via-[#1d1a17] to-[#3b1d0b] pb-32 pt-36 text-white">
         <div className="absolute inset-0 bg-dots opacity-20" />
         <div className="container relative">
           <h1 className="animate-fade-up font-display text-4xl font-extrabold leading-[1.2] sm:text-5xl pb-2">{t("title")}</h1>
