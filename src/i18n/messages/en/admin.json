@@ -177,7 +177,12 @@
       "approve": "Approve",
       "reject": "Reject",
       "tracking": "Note / tracking no.",
-      "shipped": "Shipped"
+      "shipped": "Shipped",
+      "revoke": "Revoke access",
+      "revokeConfirm": "Revoke this approval? The student will lose access for this month.",
+      "approvedState": "Approved — student has access",
+      "rejectedState": "Rejected",
+      "approveNow": "Approve now"
     },
     "grant": {
       "student": "Student ID / mobile / NIC",
@@ -435,7 +440,9 @@
       "save": "Save",
       "saved": "Saved {name}: {marks}/{total}",
       "removeConfirm": "Remove the mark for {name}?",
-      "remove": "Remove"
+      "remove": "Remove",
+      "title": "Enter marks",
+      "subtitle": "Search a student by mobile, student ID or name, type the marks and press Enter."
     }
   }
 }

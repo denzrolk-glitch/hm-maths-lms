@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ChevronRight, FileText, Plus, Trophy, Users } from "lucide-react";
+import { CalendarDays, ChevronRight, FileText, Trophy, Users } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { colomboToday, type Paper } from "@/lib/papers";
 import type { ClassRow } from "@/lib/types";
 import { getFormat, getT } from "@/i18n/server";
 import { PaperForm } from "./paper-forms";
+import { NewPaperButton } from "./new-paper-button";
 
 export async function generateMetadata() {
   return { title: (await getT("admin.nav"))("papers") };
@@ -36,7 +37,7 @@ export default async function AdminPapersPage() {
   return (
     <div className="space-y-6">
       <PageHeader title={t("title")} description={t("subtitle")} icon={FileText}>
-        <Link href="#new" className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/25 transition hover:-translate-y-px"><Plus className="h-4 w-4" /> {t("new")}</Link>
+        <NewPaperButton label={t("new")} />
       </PageHeader>
       {error && <p className="rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">{t("migrate")}</p>}
 

@@ -67,7 +67,10 @@
     "passwordWrong": "Your current password is incorrect.",
     "passwordSame": "The new password must be different from the current one.",
     "passwordFailed": "Could not change your password. Please try again.",
-    "passwordChanged": "Password changed."
+    "passwordChanged": "Password changed.",
+    "pendingExists": "You already sent a slip for this class that is waiting for approval. Withdraw it first to send a new one.",
+    "withdrawn": "Slip withdrawn. You can upload a new one now.",
+    "withdrawFailed": "Could not withdraw the slip (it may already be reviewed)."
   },
   "admin": {
     "titleRequired": "Title is required.",

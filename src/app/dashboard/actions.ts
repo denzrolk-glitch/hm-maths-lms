@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
+import { createAdminClient } from "@/lib/db/admin";
 import { TOWNS } from "@/lib/constants";
 import type { ActionState } from "@/lib/types";
 import { getT } from "@/i18n/server";
@@ -27,17 +28,37 @@ export async function submitEnrollmentAction(_p: ActionState, fd: FormData): Pro
   if (!cls || !cls.is_active) return { error: t("classUnavailable") };
   if (cls.is_free) return { error: t("classFree") };
 
+  // One slip at a time per class: a pending slip must be reviewed or withdrawn first.
+  const { data: pending } = await supabase.from("enrollments").select("id")
+    .eq("student_id", user.id).eq("class_id", classId).eq("status", "pending").limit(1);
+  if (pending?.length) return { error: t("pendingExists") };
+
   const { data: existing } = await supabase.from("enrollments").select("id, status")
     .eq("student_id", user.id).eq("class_id", classId).eq("month", month).maybeSingle();
   if (existing?.status === "approved") return { error: t("alreadyAccess") };
 
   const { error } = existing
-    ? await supabase.from("enrollments").update({ slip_url: slip, bank_ref: bankRef }).eq("id", existing.id)
+    ? await supabase.from("enrollments").update({ slip_url: slip, bank_ref: bankRef, status: "pending", admin_note: null }).eq("id", existing.id)
     : await supabase.from("enrollments").insert({ student_id: user.id, class_id: classId, month, slip_url: slip, bank_ref: bankRef, status: "pending" });
   if (error) return { error: t("slipFailed") };
 
   revalidatePath("/dashboard", "layout");
   return { ok: true, message: t("slipSubmitted") };
+}
+
+/** Student withdraws their own pending slip so they can send a new one. */
+export async function withdrawEnrollmentAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const t = await getT("errors.student");
+  const id = String(fd.get("id") ?? "");
+  const { data, error } = await supabase.from("enrollments").delete()
+    .eq("id", id).eq("student_id", user.id).eq("status", "pending").select("slip_url");
+  if (error || !data?.length) return { error: t("withdrawFailed") };
+  const slip = data[0].slip_url as string | null;
+  if (slip?.startsWith(`${user.id}/`)) await createAdminClient().storage.from("bank-slips").remove([slip]);
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/admin", "layout");
+  return { ok: true, message: t("withdrawn") };
 }
 
 export async function createOrderAction(_p: ActionState, fd: FormData): Promise<ActionState> {

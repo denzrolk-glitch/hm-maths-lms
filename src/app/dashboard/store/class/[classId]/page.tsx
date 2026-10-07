@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { CalendarClock, CheckCircle2, MapPin, Truck } from "lucide-react";
+import { ArrowRight, CalendarClock, CheckCircle2, Clock3, MapPin, Truck, XCircle } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { ClassBanner } from "@/components/class-banner";
 import { BankDetails } from "@/components/bank-details";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert } from "@/components/ui/misc";
+import { buttonVariants } from "@/components/ui/button";
 import type { ClassRow } from "@/lib/types";
 import { currentMonth, formatLKR, shiftMonth } from "@/lib/utils";
 import { getFormat, getScheduleLabel, getT } from "@/i18n/server";
 import { EnrollForm, type MonthOption } from "./enroll-form";
+import { WithdrawForm } from "./withdraw-form";
 
 export default async function EnrollPage({ params, searchParams }: { params: Promise<{ classId: string }>; searchParams: Promise<{ month?: string }> }) {
   const { classId } = await params;
@@ -23,7 +24,7 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
   const cls = data as ClassRow;
   if (cls.is_free) redirect(`/dashboard/classes/${classId}`);
 
-  const { data: mine } = await supabase.from("enrollments").select("month, status, admin_note").eq("student_id", user.id).eq("class_id", classId);
+  const { data: mine } = await supabase.from("enrollments").select("id, month, status, admin_note, created_at").eq("student_id", user.id).eq("class_id", classId);
   // Offer next month, the current month and the previous 6 months (archive packs).
   const status = new Map((mine ?? []).map((e) => [e.month as string, e.status as string]));
   const cur = currentMonth();
@@ -35,7 +36,27 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
   }));
   const firstOpen = months.find((m) => m.value === wanted && m.status !== "approved" && m.status !== "pending")
     ?? months.find((m) => m.value === cur && !m.status) ?? months.find((m) => !m.status || m.status === "rejected") ?? months[1];
-  const rejected = (mine ?? []).filter((e) => e.status === "rejected");
+  const sorted = [...(mine ?? [])].sort((a, b) => (a.month < b.month ? 1 : -1));
+  const pending = sorted.find((e) => e.status === "pending");
+  // "Owned" = approved for the current or next month.
+  const owned = sorted.find((e) => e.status === "approved" && e.month >= cur);
+  const lastRejected = !pending && [...(mine ?? [])].sort((a, b) => (a.created_at < b.created_at ? 1 : -1))[0];
+  const rejected = lastRejected && lastRejected.status === "rejected" ? lastRejected : null;
+  const open = months.some((m) => !m.status || m.status === "rejected");
+
+  const delivery = (
+    <div className="flex items-start gap-3 rounded-2xl border border-primary/15 bg-accent/60 p-3 text-sm">
+      <Truck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+      <div className="min-w-0">
+        <p className="font-semibold">{t("deliveryTitle")}</p>
+        {profile.address ? (
+          <p className="whitespace-pre-line text-xs text-muted-foreground">{[profile.address, [profile.city, profile.postal_code].filter(Boolean).join(" ")].filter(Boolean).join("\n")}</p>
+        ) : <p className="text-xs text-warning">{t("deliveryMissing")}</p>}
+        <Link href="/dashboard/profile#address" className="text-xs font-semibold text-primary hover:underline">{t("deliveryEdit")}</Link>
+      </div>
+    </div>
+  );
+  const form = <EnrollForm classId={classId} userId={user.id} months={months} defaultMonth={firstOpen.value} />;
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
@@ -68,28 +89,72 @@ export default async function EnrollPage({ params, searchParams }: { params: Pro
           </Card>
         )}
       </div>
-      <div className="lg:sticky lg:top-20 lg:self-start">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("title")}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t("steps")}</p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {rejected.length > 0 && <Alert variant="error">{t("rejected")}</Alert>}
-            {status.get(cur) === "approved" && <Alert variant="success"><CheckCircle2 className="mr-1 inline h-4 w-4" />{t("hasAccess", { month: f.month(cur) })}</Alert>}
-            <div className="flex items-start gap-3 rounded-2xl border border-primary/15 bg-accent/60 p-3 text-sm">
-              <Truck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+      <div className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+        {owned && (
+          <div className="overflow-hidden rounded-2xl border border-success/30 bg-gradient-to-br from-success/15 via-success/5 to-transparent p-5 shadow-soft">
+            <div className="flex items-start gap-3">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-success text-white shadow-md shadow-success/30"><CheckCircle2 className="h-6 w-6" /></span>
               <div className="min-w-0">
-                <p className="font-semibold">{t("deliveryTitle")}</p>
-                {profile.address ? (
-                  <p className="whitespace-pre-line text-xs text-muted-foreground">{[profile.address, [profile.city, profile.postal_code].filter(Boolean).join(" ")].filter(Boolean).join("\n")}</p>
-                ) : <p className="text-xs text-warning">{t("deliveryMissing")}</p>}
-                <Link href="/dashboard/profile#address" className="text-xs font-semibold text-primary hover:underline">{t("deliveryEdit")}</Link>
+                <p className="font-display text-lg font-bold leading-snug">{t("ownedTitle")}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{t("ownedText", { month: f.month(owned.month) })}</p>
               </div>
             </div>
-            <EnrollForm classId={classId} userId={user.id} months={months} defaultMonth={firstOpen.value} />
-          </CardContent>
-        </Card>
+            <Link href={`/dashboard/classes/${classId}`} className={buttonVariants({ variant: "success", className: "mt-4 w-full" })}>{t("openClass")} <ArrowRight className="h-4 w-4" /></Link>
+          </div>
+        )}
+
+        {pending && (
+          <div className="rounded-2xl border border-warning/40 bg-gradient-to-br from-warning/15 via-warning/5 to-transparent p-5 shadow-soft">
+            <div className="flex items-start gap-3">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-warning text-white shadow-md shadow-warning/30"><Clock3 className="h-6 w-6" /></span>
+              <div className="min-w-0">
+                <p className="font-display text-lg font-bold leading-snug">{t("pendingTitle")}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{t("pendingText", { month: f.month(pending.month), date: f.dateTime(pending.created_at) })}</p>
+              </div>
+            </div>
+            <div className="mt-4"><WithdrawForm id={pending.id} /></div>
+          </div>
+        )}
+
+        {!pending && open && owned && (
+          <details className="group rounded-2xl border bg-card shadow-soft">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 p-4 font-display font-semibold">
+              {t("payAnother")}
+              <ArrowRight className="h-4 w-4 transition group-open:rotate-90" />
+            </summary>
+            <div className="space-y-4 border-t p-4">{delivery}{form}</div>
+          </details>
+        )}
+
+        {!pending && open && !owned && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="leading-snug">{t("title")}</CardTitle>
+              <ol className="mt-2 grid grid-cols-3 gap-2">
+                {[t("stepPay"), t("stepUpload"), t("stepAccess")].map((label, i) => (
+                  <li key={label} className="flex flex-col items-center gap-1.5 rounded-xl bg-muted/60 px-2 py-2.5 text-center">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i + 1}</span>
+                    <span className="text-xs font-medium leading-snug">{label}</span>
+                  </li>
+                ))}
+              </ol>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {rejected && (
+                <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+                  <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-semibold">{t("rejectedTitle")}</p>
+                    <p className="text-destructive/90">{t("rejectedText", { month: f.month(rejected.month) })}</p>
+                    {rejected.admin_note && <p className="mt-1 text-xs">{t("reason", { note: rejected.admin_note })}</p>}
+                  </div>
+                </div>
+              )}
+              {delivery}
+              {form}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -85,8 +85,8 @@ export function DashboardShell({ area, groups, tabs, user, notices, menu, streak
                       transition={{ type: "spring", stiffness: 420, damping: 34 }} />
                   )}
                   {active && <motion.span layoutId={`${layout}-bar`} className="absolute -left-3 bottom-2 top-2 w-1 rounded-r-full bg-primary" />}
-                  <Icon className={cn("relative h-[18px] w-[18px] transition-transform group-hover:scale-110", active ? "text-primary" : "text-muted-foreground")} />
-                  <span className="relative truncate">{item.label}</span>
+                  <Icon className={cn("relative h-[18px] w-[18px] shrink-0 transition-transform group-hover:scale-110", active ? "text-primary" : "text-muted-foreground")} />
+                  <span className="relative min-w-0 flex-1 leading-snug">{item.label}</span>
                   {item.badge ? <span className="relative ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-1.5 text-[10px] font-bold text-white">{item.badge > 99 ? "99+" : item.badge}</span> : null}
                 </Link>
               );

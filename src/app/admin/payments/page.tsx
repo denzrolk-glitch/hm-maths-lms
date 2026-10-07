@@ -86,7 +86,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
                     {r.admin_note && <div className="col-span-2"><dt className="text-xs text-muted-foreground">{t("note")}</dt><dd>{r.admin_note}</dd></div>}
                   </dl>
                   <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t pt-3">
-                    <ReviewButtons id={r.id} />
+                    <ReviewButtons id={r.id} status={r.status} />
                     {wa && <a href={wa} target="_blank" rel="noreferrer" className={buttonVariants({ size: "sm", variant: "ghost", className: "text-[#128C7E] hover:text-[#128C7E] dark:text-[#25D366]" })}><WhatsAppIcon /> {t("whatsapp")}</a>}
                   </div>
                 </div>

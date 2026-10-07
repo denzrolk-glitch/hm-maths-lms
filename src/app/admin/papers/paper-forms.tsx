@@ -43,14 +43,14 @@ export function PaperForm({ paper, newId, classes, today }: {
           ))}
         </div>
       </Field>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4">
         <Field label={t("date")} htmlFor={`date-${id}`}>
           <Input id={`date-${id}`} name="paper_date" type="date" defaultValue={paper?.paper_date ?? today} required />
         </Field>
         <Field label={t("total")} htmlFor={`total-${id}`}>
           <Input id={`total-${id}`} name="total_marks" type="number" min={1} max={1000} step="0.5" defaultValue={paper?.total_marks ?? 100} required />
         </Field>
-        <Field label={t("batch")} htmlFor={`year-${id}`}>
+        <Field label={t("batch")} htmlFor={`year-${id}`} className="col-span-2">
           <Select id={`year-${id}`} name="al_year" defaultValue={paper?.al_year ?? ""}>
             <option value="">{t("allBatches")}</option>
             {AL_YEARS.map((y) => <option key={y} value={y}>{tc("alBatch", { year: y })}</option>)}
@@ -183,7 +183,7 @@ function HitRow({ hit, paperId, total, first, onSaved }: { hit: StudentHit; pape
       <div className="flex items-center gap-2">
         <div className="relative">
           <Input data-mark-input={first ? "" : undefined} value={marks} onChange={(e) => setMarks(e.target.value)} inputMode="decimal" type="number" min={0} max={total} step="0.5"
-            placeholder={t("marks")} aria-label={t("marksFor", { name: hit.full_name })} className={cn("h-10 w-28 pr-12 text-right font-semibold", marks !== "" && !valid && "border-destructive")}
+            placeholder="0" aria-label={t("marksFor", { name: hit.full_name })} className={cn("h-10 w-32 pr-14 text-right font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none", marks !== "" && !valid && "border-destructive")}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); save(); } }} />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">/{total}</span>
         </div>

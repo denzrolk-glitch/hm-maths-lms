@@ -132,7 +132,10 @@
     "noBooksText": "Printed tutes will be available here soon.",
     "title": "Store",
     "subtitle": "Monthly class admissions, past-month archive packs and printed tute books.",
-    "publicSubtitle": "Class admissions and tute books. Sign in to enroll."
+    "publicSubtitle": "Class admissions and tute books. Sign in to enroll.",
+    "owned": "You have this",
+    "pending": "Awaiting approval",
+    "open": "Open class"
   },
   "classes": {
     "title": "My Class",
@@ -416,7 +419,21 @@
     "submit": "Submit for approval",
     "deliveryTitle": "Tutes will be posted to",
     "deliveryMissing": "No delivery address on your profile yet.",
-    "deliveryEdit": "Update address"
+    "deliveryEdit": "Update address",
+    "ownedTitle": "You have this class",
+    "ownedText": "Your access for {month} is active. Lessons, recordings and tutes are unlocked.",
+    "openClass": "Open class",
+    "payAnother": "Pay for another month",
+    "pendingTitle": "Slip under review",
+    "pendingText": "Your slip for {month} was sent on {date}. You can send another slip after it is reviewed, or withdraw it to upload a new one.",
+    "withdraw": "Withdraw slip",
+    "withdrawConfirm": "Withdraw this slip? You can upload a new one afterwards.",
+    "rejectedTitle": "Slip rejected",
+    "rejectedText": "Your slip for {month} was rejected. Please upload a clear slip again.",
+    "reason": "Reason: {note}",
+    "stepPay": "Pay",
+    "stepUpload": "Upload slip",
+    "stepAccess": "Get access"
   },
   "order": {
     "amount": "{price} × quantity (+ courier if applicable)",

@@ -259,8 +259,26 @@ export function CancelSessionButton({ id, cancelled }: { id: string; cancelled: 
 }
 
 // ───────────── Payments ─────────────
-export function ReviewButtons({ id, action = A.reviewEnrollmentAction }: { id: string; action?: Act }) {
+export function ReviewButtons({ id, status = "pending", action = A.reviewEnrollmentAction }: { id: string; status?: string; action?: Act }) {
   const { t } = useForms();
+  if (status === "approved") {
+    return (
+      <ActionForm action={action} confirm={t("review.revokeConfirm")} className="flex flex-wrap items-center gap-3">
+        <input type="hidden" name="id" value={id} />
+        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success"><Check className="h-4 w-4" /> {t("review.approvedState")}</span>
+        <SubmitButton name="decision" value="rejected" size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10 hover:text-destructive"><RotateCcw /> {t("review.revoke")}</SubmitButton>
+      </ActionForm>
+    );
+  }
+  if (status === "rejected") {
+    return (
+      <ActionForm action={action} className="flex flex-wrap items-center gap-3">
+        <input type="hidden" name="id" value={id} />
+        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-destructive"><X className="h-4 w-4" /> {t("review.rejectedState")}</span>
+        <SubmitButton name="decision" value="approved" size="sm" variant="outline"><Check /> {t("review.approveNow")}</SubmitButton>
+      </ActionForm>
+    );
+  }
   return (
     <ActionForm action={action} className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <input type="hidden" name="id" value={id} />

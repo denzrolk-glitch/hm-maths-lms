@@ -5,10 +5,15 @@ import type { ClassRow, Product } from "@/lib/types";
 import { ClassCard } from "@/components/class-card";
 import { EmptyState } from "@/components/ui/misc";
 import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, Clock } from "lucide-react";
 import { getT } from "@/i18n/server";
 import { formatLKR } from "@/lib/utils";
 
-export async function StoreCatalog({ classes, products }: { classes: ClassRow[]; products: Product[] }) {
+/** Per-class state for the signed-in student: has access this month, or a slip waiting for review. */
+export type ClassOwnership = Record<string, "owned" | "pending">;
+
+export async function StoreCatalog({ classes, products, owned }: { classes: ClassRow[]; products: Product[]; owned?: ClassOwnership }) {
   const t = await getT("portal.store");
   const paid = classes.filter((c) => !c.is_free);
   return (
@@ -19,8 +24,12 @@ export async function StoreCatalog({ classes, products }: { classes: ClassRow[];
         {paid.length ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {paid.map((c) => (
-              <ClassCard key={c.id} cls={c} href={`/dashboard/store/class/${c.id}`}
-                footer={<span className={buttonVariants({ size: "sm" })}>{t("enroll")}</span>} />
+              <ClassCard key={c.id} cls={c} href={owned?.[c.id] === "owned" ? `/dashboard/classes/${c.id}` : `/dashboard/store/class/${c.id}`}
+                footer={owned?.[c.id] === "owned" ? (
+                  <span className="flex items-center gap-2"><Badge variant="success"><CheckCircle2 /> {t("owned")}</Badge><span className={buttonVariants({ size: "sm", variant: "outline" })}>{t("open")}</span></span>
+                ) : owned?.[c.id] === "pending" ? (
+                  <Badge variant="warning"><Clock /> {t("pending")}</Badge>
+                ) : <span className={buttonVariants({ size: "sm" })}>{t("enroll")}</span>} />
             ))}
           </div>
         ) : (
