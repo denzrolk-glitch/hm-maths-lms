@@ -1,5 +1,5 @@
 #!/bin/bash
-# Pull the latest code, apply database migrations, rebuild and restart. Run: sudo /srv/hm-maths/app/deploy/update.sh
+# Pull the latest code, apply database migrations, rebuild and restart. Run: sudo bash /srv/hm-maths/app/deploy/update.sh
 set -euo pipefail
 BRANCH="${1:-$(sudo -u hm git -C /srv/hm-maths/app rev-parse --abbrev-ref HEAD)}"
 cd /srv/hm-maths/app

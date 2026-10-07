@@ -14,7 +14,7 @@ Paths: app `/srv/hm-maths/app`, env `/srv/hm-maths/.env`, uploads `/srv/hm-maths
 
 ## Update to the latest code
 ```bash
-sudo /srv/hm-maths/app/deploy/update.sh          # current branch
+sudo bash /srv/hm-maths/app/deploy/update.sh
 ```
 
 ## Admin account (create / reset password)
