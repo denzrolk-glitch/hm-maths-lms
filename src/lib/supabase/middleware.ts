@@ -23,13 +23,17 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  if (!user && PROTECTED.some((p) => path === p || path.startsWith(p + "/"))) {
+  // Only redirect page loads. A server-action POST that gets redirected would be re-sent to
+  // /login with the original action id → "Server Action was not found" (404) in the browser.
+  // Let it through instead: the action's requireUser()/requireAdmin() redirects to /login properly.
+  const isPageLoad = request.method === "GET" || request.method === "HEAD";
+  if (!user && isPageLoad && PROTECTED.some((p) => path === p || path.startsWith(p + "/"))) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.search = `?next=${encodeURIComponent(path + request.nextUrl.search)}`;
     return NextResponse.redirect(url);
   }
-  if (user && AUTH_PAGES.includes(path)) {
+  if (user && isPageLoad && AUTH_PAGES.includes(path)) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     url.search = "";

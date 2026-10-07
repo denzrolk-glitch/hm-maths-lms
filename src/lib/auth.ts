@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
@@ -15,7 +16,13 @@ export const getSession = cache(async () => {
 
 export async function requireUser() {
   const s = await getSession();
-  if (!s.user) redirect("/login");
+  if (!s.user) {
+    // Keep the page the user was on so they come straight back after signing in.
+    let back = "";
+    try { const u = new URL((await headers()).get("referer") ?? ""); back = u.pathname + u.search; } catch { /* no referer */ }
+    if (back.startsWith("/login")) back = "";
+    redirect(back.startsWith("/") && !back.startsWith("//") ? `/login?next=${encodeURIComponent(back)}` : "/login");
+  }
   // Signed in but no profile row → database script not run yet, or profile was deleted.
   if (!s.profile) redirect("/account-issue");
   return { supabase: s.supabase, user: s.user, profile: s.profile };
