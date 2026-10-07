@@ -42,7 +42,7 @@ export default async function HomePage() {
 
   const account = !user ? "guest" : profile?.role === "admin" ? "admin" : "student";
   return (
-    <div className="relative overflow-x-clip bg-gradient-to-b from-[#f3f9ff] via-white to-[#eef7ff] text-ink dark:from-[#060b1a] dark:via-[#070d1f] dark:to-[#060b1a] dark:text-white">
+    <div className="dark theme-orange relative overflow-x-clip bg-[#050505] text-white">
       <SmoothScroll />
       <LandingNav account={account} />
       <main>

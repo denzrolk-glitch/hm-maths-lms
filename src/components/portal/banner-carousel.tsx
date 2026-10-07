@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 type Slide = { title: string; text: string; cta: string; href: string; theme: "orange" | "teal" | "dark" | "purple"; symbol?: string };
 const THEMES: Record<Slide["theme"], string> = {
-  orange: "from-[#1963d4] via-[#1f7ae8] to-[#41c9f5] text-white",
-  teal: "from-[#0e5d82] via-[#068dc4] to-[#41c9f5] text-white",
-  dark: "from-[#0b1530] via-[#13224a] to-[#1963d4] text-white",
-  purple: "from-[#312e81] via-[#4f46e5] to-[#38bdf8] text-white",
+  orange: "from-[#f05b06] via-[#f97316] to-[#fbbf24] text-white",
+  teal: "from-[#14524f] via-[#1f807b] to-[#2bb3aa] text-white",
+  dark: "from-[#0b0b0b] via-[#1d1a17] to-[#3b1d0b] text-white",
+  purple: "from-[#3b0764] via-[#6d28d9] to-[#a855f7] text-white",
 };
 
 export function BannerCarousel() {

@@ -4,57 +4,67 @@
 
 @layer base {
   :root {
-    --background: 210 50% 98%;
-    --foreground: 222 47% 12%;
+    --background: 30 14% 97%;
+    --foreground: 20 14% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 12%;
+    --card-foreground: 20 14% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 12%;
-    --primary: 213 81% 52%;
+    --popover-foreground: 20 14% 8%;
+    --primary: 22 95% 46%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 212 45% 95%;
-    --secondary-foreground: 222 47% 18%;
-    --muted: 212 40% 96%;
-    --muted-foreground: 217 15% 45%;
-    --accent: 210 100% 96%;
-    --accent-foreground: 214 75% 38%;
+    --secondary: 30 10% 94%;
+    --secondary-foreground: 20 14% 12%;
+    --muted: 30 10% 95%;
+    --muted-foreground: 25 6% 42%;
+    --accent: 25 90% 95%;
+    --accent-foreground: 20 90% 30%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 63% 36%;
     --success-foreground: 0 0% 100%;
     --warning: 32 95% 44%;
     --warning-foreground: 0 0% 100%;
-    --border: 214 35% 90%;
-    --input: 214 30% 86%;
-    --ring: 213 81% 52%;
+    --border: 30 10% 89%;
+    --input: 30 10% 85%;
+    --ring: 22 95% 50%;
     --radius: 0.9rem;
-    --portal-head: 222 47% 12%;
+    --portal-head: 20 10% 6%;
+    --teal-50: 255 244 236; --teal-100: 255 229 210; --teal-200: 255 198 161; --teal-300: 255 159 102; --teal-400: 251 122 46; --teal-500: 240 91 6; --teal-600: 209 75 3; --teal-700: 173 59 6; --teal-800: 138 48 12; --teal-900: 113 41 14; --teal-950: 61 18 3;
   }
   .dark {
-    --background: 224 50% 6%;
-    --foreground: 214 40% 96%;
-    --card: 224 42% 9%;
-    --card-foreground: 214 40% 96%;
-    --popover: 224 42% 10%;
-    --popover-foreground: 214 40% 96%;
-    --primary: 211 92% 62%;
-    --primary-foreground: 224 60% 8%;
-    --secondary: 224 32% 15%;
-    --secondary-foreground: 214 40% 96%;
-    --muted: 224 32% 13%;
-    --muted-foreground: 216 18% 66%;
-    --accent: 216 45% 16%;
-    --accent-foreground: 210 90% 80%;
+    --background: 20 14% 4%;
+    --foreground: 30 15% 95%;
+    --card: 20 10% 7%;
+    --card-foreground: 30 15% 95%;
+    --popover: 20 10% 8%;
+    --popover-foreground: 30 15% 95%;
+    --primary: 24 95% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 8% 13%;
+    --secondary-foreground: 30 15% 95%;
+    --muted: 20 8% 11%;
+    --muted-foreground: 30 8% 62%;
+    --accent: 22 40% 12%;
+    --accent-foreground: 25 95% 75%;
     --destructive: 0 72% 58%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 55% 48%;
     --success-foreground: 150 60% 6%;
     --warning: 38 92% 56%;
     --warning-foreground: 30 60% 6%;
-    --border: 222 30% 18%;
-    --input: 222 30% 22%;
-    --ring: 211 92% 62%;
-    --portal-head: 224 50% 6%;
+    --border: 20 8% 16%;
+    --input: 20 8% 20%;
+    --ring: 24 95% 54%;
+    --portal-head: 20 14% 4%;
+  }
+  /* Explicit orange scope (kept for public pages; same as root palette) */
+  .theme-orange {
+    --teal-50: 255 244 236; --teal-100: 255 229 210; --teal-200: 255 198 161; --teal-300: 255 159 102; --teal-400: 251 122 46; --teal-500: 240 91 6; --teal-600: 209 75 3; --teal-700: 173 59 6; --teal-800: 138 48 12; --teal-900: 113 41 14; --teal-950: 61 18 3;
+    --primary: 22 95% 48%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 22 95% 52%;
+    --accent: 22 40% 12%;
+    --accent-foreground: 25 95% 75%;
   }
   * { @apply border-border; }
   html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
@@ -104,15 +114,15 @@
   .glass { @apply border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60; }
   .bg-mesh {
     background-image:
-      radial-gradient(at 12% 8%, hsl(205 100% 88% / .75) 0, transparent 45%),
-      radial-gradient(at 88% 0%, hsl(190 95% 85% / .6) 0, transparent 40%),
-      radial-gradient(at 70% 90%, hsl(225 100% 92% / .55) 0, transparent 45%);
+      radial-gradient(at 12% 8%, hsl(24 100% 90% / .55) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(24 100% 88% / .45) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(40 60% 92% / .5) 0, transparent 45%);
   }
   .dark .bg-mesh {
     background-image:
-      radial-gradient(at 12% 8%, hsl(213 80% 30% / .35) 0, transparent 45%),
-      radial-gradient(at 88% 0%, hsl(195 90% 30% / .25) 0, transparent 40%),
-      radial-gradient(at 70% 90%, hsl(230 70% 30% / .25) 0, transparent 45%);
+      radial-gradient(at 12% 8%, hsl(22 95% 40% / .22) 0, transparent 45%),
+      radial-gradient(at 88% 0%, hsl(30 80% 30% / .14) 0, transparent 40%),
+      radial-gradient(at 70% 90%, hsl(15 70% 25% / .16) 0, transparent 45%);
   }
   .bg-dots {
     background-image: radial-gradient(hsl(var(--primary) / .18) 1px, transparent 1px);
